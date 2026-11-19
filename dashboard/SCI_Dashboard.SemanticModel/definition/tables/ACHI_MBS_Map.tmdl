@@ -1,0 +1,82 @@
+table ACHI_MBS_Map
+	lineageTag: e364dea4-14ac-46f6-bb18-2367e1e40682
+
+	column surg_achi
+		dataType: string
+		lineageTag: fc4674d5-a165-4b2c-8e87-bbf1ce3a2c81
+		summarizeBy: none
+		sourceColumn: surg_achi
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'MBS item'
+		dataType: string
+		lineageTag: 4a332577-cd6c-42a0-8110-7557145548fd
+		summarizeBy: none
+		sourceColumn: MBS item
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'MBS fee'
+		dataType: double
+		lineageTag: d86c337f-147c-412b-8887-51f98a745d8e
+		summarizeBy: none
+		sourceColumn: MBS fee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Match
+		dataType: string
+		lineageTag: faf16335-32bf-4d17-a7a4-57cd410824ca
+		summarizeBy: none
+		sourceColumn: Match
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Match note'
+		dataType: string
+		lineageTag: d113d0ce-14a1-445e-bd23-0e6cbc985709
+		summarizeBy: none
+		sourceColumn: Match note
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ACHI_MBS_Map = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [surg_achi = text, #"MBS item" = text, #"MBS fee" = number, Match = text, #"Match note" = text],
+				        {
+				            {"51011-00", "51011", 1718.15, "Same level count", "Decompression, 1 motion segment"},
+				            {"51011-01", "51011", 1718.15, "Same level count", "Decompression, 1 motion segment"},
+				            {"51011-02", "51011", 1718.15, "Same level count", "Decompression, 1 motion segment"},
+				            {"51011-03", "51011", 1718.15, "Same level count", "Decompression, 1 motion segment"},
+				            {"51012-00", "51012", 2290.65, "Lower bound", "ACHI is 2 or more levels; MBS fee for 2 segments"},
+				            {"51012-01", "51012", 2290.65, "Lower bound", "ACHI is 2 or more levels; MBS fee for 2 segments"},
+				            {"51012-02", "51012", 2290.65, "Lower bound", "ACHI is 2 or more levels; MBS fee for 2 segments"},
+				            {"51012-03", "51012", 2290.65, "Lower bound", "ACHI is 2 or more levels; MBS fee for 2 segments"},
+				            {"51021-00", "51021", 1533.50, "Lower bound", "ACHI is 1 or 2 levels; MBS fee for 1 segment"},
+				            {"51023-00", "51023", 2270.10, "Same level count", "Fixation, 3 or 4 motion segments"},
+				            {"51025-00", "51024", 2620.70, "Lower bound", "ACHI is 5 or more levels; MBS 51024 is 5 or 6 segments"},
+				            {"51031-00", "51031", 1126.80, "Same level count", "Posterior bone graft, 1 motion segment"},
+				            {"51032-00", "51032", 1352.20, "Lower bound", "ACHI is 2 or more levels; MBS fee for 2 segments"},
+				            {"51041-00", "51041", 1295.85, "Same level count", "Anterior column fusion, 1 motion segment"},
+				            {"51042-00", "51042", 1814.30, "Lower bound", "ACHI is 2 or more levels; MBS fee for 2 segments"},
+				            {"51061-00", "51061", 3392.80, "Same level count", "Anterior and posterior fusion, 1 motion segment"},
+				            {"51062-00", "51062", 4397.80, "Lower bound", "ACHI is 2 or more levels; MBS fee for 2 segments"},
+				            {"40330-00", "51011", 1718.15, "Approximate", "No MBS item for nerve root decompression; priced as 1-segment decompression"},
+				            {"30402-00", "30723", 623.95, "Approximate", "Drainage of retroperitoneal collection or abscess"},
+				            {"30406-00", "30406", 62.55, "Same procedure", "Paracentesis abdominis"},
+				            {"40336-00", null, null, "No match", "No MBS item found for injection into intervertebral disc; not costed"}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,16 @@
+table 'Compare Left Aboriginal or TSI'
+	lineageTag: df07f4ef-5447-5e76-a9f6-19c3ed3625d9
+
+	column 'Aboriginal or TSI'
+		dataType: string
+		lineageTag: 494576f4-7fd7-555d-97d6-c8be3d6f3b7f
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Aboriginal or TSI]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Left Aboriginal or TSI' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( DISTINCT ( Patients[Aboriginal or TSI] ), "Aboriginal or TSI", Patients[Aboriginal or TSI] )
+

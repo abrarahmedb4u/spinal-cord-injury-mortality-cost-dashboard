@@ -1,0 +1,34 @@
+table 'Death source'
+	lineageTag: 0758be7f-c86a-4aa9-b10e-654282cbae70
+
+	column Source
+		dataType: string
+		lineageTag: 6546a0f8-53c5-4514-a8f8-4764a8576c9a
+		summarizeBy: none
+		sourceColumn: Source
+		sortByColumn: 'Sort order'
+
+	column 'Sort order'
+		dataType: int64
+		formatString: 0
+		lineageTag: 15549264-267e-47ec-a9fd-2d06509c39fa
+		summarizeBy: none
+		sourceColumn: Sort order
+
+	partition 'Death source' = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [#"Source" = text, #"Sort order" = Int64.Type],
+				        {
+				            {"Mode of separation is IP Died", 1},
+				            {"Patient has a deceased date", 2},
+				            {"Deceased date is the 10 Sep 2026 default", 3}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

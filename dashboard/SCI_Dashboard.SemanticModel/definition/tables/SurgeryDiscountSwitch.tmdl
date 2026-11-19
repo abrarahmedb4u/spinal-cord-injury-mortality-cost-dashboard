@@ -1,0 +1,33 @@
+table SurgeryDiscountSwitch
+	lineageTag: 927fab93-8d17-461f-af41-83255229e3c7
+
+	column 'Apply same-day discount'
+		dataType: string
+		lineageTag: ac2ad336-4dc7-45d7-b543-f594a92c8cb2
+		summarizeBy: none
+		sourceColumn: Apply same-day discount
+		sortByColumn: 'Sort order'
+
+	column 'Sort order'
+		dataType: int64
+		formatString: 0
+		lineageTag: cef4c9ec-f7cd-4f1d-9a94-beb849d921c9
+		summarizeBy: none
+		sourceColumn: Sort order
+
+	partition SurgeryDiscountSwitch = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [#"Apply same-day discount" = text, #"Sort order" = Int64.Type],
+				        {
+				            {"Yes", 1},
+				            {"No", 2}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

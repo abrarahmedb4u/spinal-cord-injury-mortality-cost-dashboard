@@ -1,0 +1,16 @@
+table 'Compare Right Age band'
+	lineageTag: 3f3bd60b-a587-5afe-9d40-4e3ca0fd6865
+
+	column 'Age band'
+		dataType: string
+		lineageTag: 07750357-9846-5a51-bcf2-2184cac81fae
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Age band]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Right Age band' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( CALCULATETABLE ( DISTINCT ( Admissions[Age band] ), Admissions[Is 60+] = TRUE () ), "Age band", Admissions[Age band] )
+

@@ -1,0 +1,78 @@
+table FeeLookup
+	lineageTag: 31cc9993-f00d-4d49-b46b-62726a40e63b
+
+	column Code
+		dataType: string
+		lineageTag: bad3c879-c452-44f0-9d47-2d262614327c
+		summarizeBy: none
+		sourceColumn: Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Description
+		dataType: string
+		lineageTag: 1d45b51a-0dc1-4838-add2-8bd60d8d7709
+		summarizeBy: none
+		sourceColumn: Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column Category
+		dataType: string
+		lineageTag: 66aced79-b58f-4a4d-85f5-39b3377b23b9
+		summarizeBy: none
+		sourceColumn: Category
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fee
+		dataType: double
+		lineageTag: 3213abab-a975-4b8c-8444-5f82f2b25969
+		summarizeBy: sum
+		sourceColumn: Fee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Source
+		dataType: string
+		lineageTag: 1d1c492d-e871-40e1-b5e9-5d79c3e3c4e2
+		summarizeBy: none
+		sourceColumn: Source
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Used in cost'
+		dataType: string
+		lineageTag: d790741b-b2d7-4c88-831a-eca58ef0adc4
+		summarizeBy: none
+		sourceColumn: Used in cost
+
+		annotation SummarizationSetBy = Automatic
+
+	partition FeeLookup = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [Code = text, Description = text, Category = text, Fee = number, Source = text, #"Used in cost" = text],
+				        {
+				            {"13870", "ICU - first day", "ICU", 433.45, "MBS item 13870, per Dr Dorrian 25 Sep 2026", "Yes"},
+				            {"13873", "ICU - each later day", "ICU", 321.45, "MBS item 13873, per Dr Dorrian 25 Sep 2026", "Yes"},
+				            {"65060", "Basic blood tests", "Pathology", 8.25, "MBS item 65060, per Dr Dorrian 25 Sep 2026", "On/off switch"},
+				            {"69333", "Urine examination", "Pathology", 20.55, "MBS item 69333, per Dr Dorrian 25 Sep 2026", "No - no UTI codes in data"},
+				            {"63185", "MRI for trauma", "Imaging", 412.25, "MBS item 63185, per Dr Dorrian 25 Sep 2026", "No - no field records a scan"},
+				            {"56220", "CT of spine", "Imaging", 277.10, "MBS item 56220, per Dr Dorrian 25 Sep 2026", "No - no field records a scan"},
+				            {"AMOXICILLIN", "Amoxicillin - antibiotic", "Medicine", 24.17, "PBS, per Dr Dorrian 25 Sep 2026", "No - no UTI codes in data"},
+				            {"MELOXICAM", "Meloxicam - anti-inflammatory", "Medicine", 22.03, "PBS, per Dr Dorrian 25 Sep 2026", "Yes - after surgery"},
+				            {"PARACETAMOL_CODEINE", "Paracetamol + codeine - pain relief", "Medicine", 21.93, "PBS, per Dr Dorrian 25 Sep 2026", "Yes - after surgery"}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

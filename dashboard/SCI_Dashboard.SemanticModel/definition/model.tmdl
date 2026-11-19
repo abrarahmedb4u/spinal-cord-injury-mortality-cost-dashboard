@@ -1,0 +1,49 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	valueFilterBehavior: independent
+	dataAccessOptions
+		fastCombine
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["REDCapTokenFile","DataSource","CSVPath","REDCap_API","REDCap_CSV","REDCap_Raw","Patients","Admissions","Surgery","DRG","ICD","FeeLookup","ACHI_MBS_Map","BloodTestSwitch","Death source","Completeness field","SurgeryDiscountSwitch"]
+
+annotation PBI_ProTooling = ["DaxQueryView_Desktop","DevMode"]
+
+ref table Patients
+ref table DateTableTemplate_040d5172-28b9-49ce-bbd9-66a04dbba7d9
+ref table LocalDateTable_0ed3ab26-a183-4f3a-bfff-2023ca086c3e
+ref table Admissions
+ref table LocalDateTable_ff7a8dac-c666-45af-a7c5-1891d6e82f44
+ref table LocalDateTable_ebba0010-45c8-4358-b212-bcc48a19d7c4
+ref table Surgery
+ref table LocalDateTable_0f11aead-cb22-4ff3-9227-5556226f58f6
+ref table DRG
+ref table ICD
+ref table FeeLookup
+ref table ACHI_MBS_Map
+ref table BloodTestSwitch
+ref table 'Death source'
+ref table 'Completeness field'
+ref table SurgeryDiscountSwitch
+ref table 'Compare Left Year'
+ref table 'Compare Left Age band'
+ref table 'Compare Left Gender'
+ref table 'Compare Left Funding'
+ref table 'Compare Left Aboriginal or TSI'
+ref table 'Compare Left Had surgery'
+ref table 'Compare Left metric'
+ref table 'Compare Right Year'
+ref table 'Compare Right Age band'
+ref table 'Compare Right Gender'
+ref table 'Compare Right Funding'
+ref table 'Compare Right Aboriginal or TSI'
+ref table 'Compare Right Had surgery'
+ref table 'Compare Right metric'
+
+ref cultureInfo en-US
+

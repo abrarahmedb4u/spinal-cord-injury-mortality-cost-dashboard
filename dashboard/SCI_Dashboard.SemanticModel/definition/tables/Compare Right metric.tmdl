@@ -1,0 +1,106 @@
+table 'Compare Right metric'
+	lineageTag: e3add17e-edb1-5750-a313-d8e1628bfada
+
+	measure 'Right value' =
+			VAR metric = SELECTEDVALUE ( 'Compare Right metric'[Metric], "In-hospital mortality %" )
+			RETURN
+			    CALCULATE (
+			        SWITCH (
+			            metric,
+			            "In-hospital mortality %", [In-hospital mortality %],
+			            "Admissions (n)", [Admissions (n)],
+			            "Deaths (n)", [Deaths (n)],
+			            "Median length of stay (days)", [Median length of stay (days)],
+			            "% with ICU stay", [% with ICU stay],
+			            "Average cost per admission", [Average cost per admission]
+			        ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Year'[Admission year] ), Admissions[Admission year] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Age band'[Age band] ), Admissions[Age band] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Gender'[Gender] ), Patients[Gender] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Funding'[Funding] ), Patients[Funding] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Aboriginal or TSI'[Aboriginal or TSI] ), Patients[Aboriginal or TSI] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Had surgery'[Had surgery] ), Admissions[Had surgery] ) )
+			    )
+		lineageTag: 70f7557e-2868-5019-b455-499b16e7fa82
+
+		formatStringDefinition = SWITCH ( SELECTEDVALUE ( 'Compare Right metric'[Metric], "In-hospital mortality %" ), "In-hospital mortality %", "0.00%", "Admissions (n)", "#,0", "Deaths (n)", "0", "Median length of stay (days)", "0", "% with ICU stay", "0.0%", "Average cost per admission", "\$#,0", "0" )
+
+	measure 'Right admissions' =
+			CALCULATE (
+			    [Admissions (n)],
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Year'[Admission year] ), Admissions[Admission year] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Age band'[Age band] ), Admissions[Age band] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Gender'[Gender] ), Patients[Gender] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Funding'[Funding] ), Patients[Funding] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Aboriginal or TSI'[Aboriginal or TSI] ), Patients[Aboriginal or TSI] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Had surgery'[Had surgery] ), Admissions[Had surgery] ) )
+			)
+		formatString: #,0
+		lineageTag: 17b194a6-b916-5a24-8787-cce6ddb36e9a
+
+	measure 'Right deaths' =
+			CALCULATE (
+			    [Deaths (n)],
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Year'[Admission year] ), Admissions[Admission year] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Age band'[Age band] ), Admissions[Age band] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Gender'[Gender] ), Patients[Gender] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Funding'[Funding] ), Patients[Funding] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Aboriginal or TSI'[Aboriginal or TSI] ), Patients[Aboriginal or TSI] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Had surgery'[Had surgery] ), Admissions[Had surgery] ) )
+			)
+		formatString: 0
+		lineageTag: 0204a552-90f7-53cd-b107-444ff3768c9a
+
+	measure 'Right value text' =
+			VAR metric = SELECTEDVALUE ( 'Compare Right metric'[Metric], "In-hospital mortality %" )
+			VAR v = [Right value]
+			RETURN
+			    IF ( ISBLANK ( v ), "No data", SWITCH ( metric, "In-hospital mortality %", FORMAT ( v, "0.00%" ), "Admissions (n)", FORMAT ( v, "#,0" ), "Deaths (n)", FORMAT ( v, "0" ), "Median length of stay (days)", FORMAT ( v, "0" ), "% with ICU stay", FORMAT ( v, "0.0%" ), "Average cost per admission", FORMAT ( v, "\$#,0" ) ) )
+		lineageTag: 9a826829-c811-5114-ba67-ea45f1cd971f
+
+	measure 'Right group summary' =
+			CALCULATE (
+			    IF (
+			        [Admissions (n)] = 0,
+			        "No admissions match these filters. Untick a box, or press Clear all filters.",
+			        "This group: " & FORMAT ( [Admissions (n)], "#,0" ) & " admissions, " & FORMAT ( [Deaths (n)], "0" ) & " deaths. In-hospital mortality "
+			            & FORMAT ( [In-hospital mortality %], "0.0%" ) & " (95% CI " & FORMAT ( [Mortality CI lower %], "0.0%" ) & " to "
+			            & FORMAT ( [Mortality CI upper %], "0.0%" ) & "). With so few deaths, a gap between the two sides is not reliable."
+			    ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Year'[Admission year] ), Admissions[Admission year] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Age band'[Age band] ), Admissions[Age band] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Gender'[Gender] ), Patients[Gender] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Funding'[Funding] ), Patients[Funding] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Aboriginal or TSI'[Aboriginal or TSI] ), Patients[Aboriginal or TSI] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Right Had surgery'[Had surgery] ), Admissions[Had surgery] ) )
+			)
+		lineageTag: d416838c-9e17-5a55-8fd6-57f517ba3cd5
+
+	measure 'Right label' = "Right side (orange in the chart): " & SELECTEDVALUE ( 'Compare Right metric'[Metric], "In-hospital mortality %" )
+		lineageTag: 0d2706ae-021f-5fc7-b687-dc543cc5b168
+
+	column Metric
+		dataType: string
+		lineageTag: 0f709c89-7692-5807-9f60-a729fadfe8c9
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Metric]
+		sortByColumn: 'Sort order'
+
+		annotation SummarizationSetBy = User
+
+	column 'Sort order'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: 2ebc338f-7af1-5a41-88f5-de7013a9971b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Sort order]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Right metric' = calculated
+		mode: import
+		source = DATATABLE ( "Metric", STRING, "Sort order", INTEGER, { { "In-hospital mortality %", 1 }, { "Admissions (n)", 2 }, { "Deaths (n)", 3 }, { "Median length of stay (days)", 4 }, { "% with ICU stay", 5 }, { "Average cost per admission", 6 } } )
+

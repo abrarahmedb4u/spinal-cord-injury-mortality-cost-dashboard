@@ -1,0 +1,589 @@
+<!-- SCI 60+ Dashboard wireframe v0.3 (S2-15). Revised after SA Health reviewer feedback. ALL PATIENTS AND VALUES ARE FICTIONAL MOCK DATA. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCI 60+ Dashboard, wireframe v0.3</title>
+<style>
+:root{
+  --frame:#2B5C98; --frame-2:#3F86B6; --navy:#26407A; --ink:#1F2430; --muted:#5B6270; --line:#DCE2EA; --soft:#F3F6FA;
+  --high:#B42318; --low:#1F5FA8; --ok:#256B4B; --warn:#8A5000;
+  --s1:#3F4652; --s2:#C27A00;           /* chart series: charcoal and amber, no pink/blue pairing */
+  --num: Corbel, Candara, "Segoe UI", Calibri, Carlito, "Helvetica Neue", Arial, sans-serif;
+  --text: Calibri, Carlito, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box} html,body{margin:0}
+body{font-family:var(--text);color:var(--ink);background:linear-gradient(160deg,var(--frame) 0%,var(--frame) 55%,var(--frame-2) 100%);min-height:100vh;padding:12px 16px 22px;font-size:15px}
+button,select,input{font:inherit}
+:focus-visible{outline:3px solid #FFD34D;outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+[hidden]{display:none!important}
+
+.appbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;color:#fff;margin:0 auto 10px;max-width:1560px}
+.brand{margin-right:auto} .brand h1{font-size:19px;margin:0} .brand p{margin:1px 0 0;font-size:13px;opacity:.85}
+.seg{display:flex;border:1px solid rgba(255,255,255,.6);border-radius:6px;overflow:hidden}
+.seg button{background:transparent;color:#fff;border:0;padding:6px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--navy);font-weight:700}
+.picker{display:flex;align-items:center;gap:8px;font-size:14px} .picker select{padding:4px 6px;border-radius:4px;border:0;min-width:270px}
+.status{font-size:12.5px;opacity:.9}
+
+.sheet{background:#fff;border-radius:8px;padding:18px 24px 16px;max-width:1560px;margin:0 auto;position:relative}
+.mock{position:absolute;top:14px;right:20px;border:2px dashed #8A5000;color:#8A5000;font-weight:700;border-radius:4px;padding:3px 9px;font-size:13px;transform:rotate(2deg);background:#fff;z-index:2}
+
+.banner h2{font-family:var(--num);font-size:36px;margin:0;line-height:1.05;letter-spacing:-.3px}
+.banner h2 small{font-size:20px;font-weight:400;color:var(--muted);letter-spacing:0;margin-left:10px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 22px;margin:8px 0 4px;font-size:15px}
+.meta span b{font-weight:400;color:var(--muted);margin-right:5px}
+.conv{font-size:13px;color:var(--muted);margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{border-radius:999px;padding:2px 10px;font-size:13.5px;border:1px solid var(--line);background:var(--soft)}
+.chip.red{background:#FDECEA;border-color:#F3B8B2;color:var(--high);font-weight:600}
+.chip.amber{background:#FFF3DC;border-color:#F0CF8E;color:var(--warn);font-weight:600}
+.chip.log{background:#EEF2FB;border-color:#C6D2EE;color:var(--navy)}
+
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--navy);color:#fff;border-radius:6px;padding:9px 8px 10px;text-align:center}
+.kpi .l{font-size:14.5px;line-height:1.15;min-height:2.3em;display:flex;align-items:center;justify-content:center}
+.kpi .v{font-family:var(--num);font-size:34px;line-height:1.1;margin:1px 0 3px}
+.kpi .p{font-family:var(--num);font-size:15.5px;opacity:.95}
+
+/* 12-column cover grid: wide tables get full width */
+.cover{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;align-items:start}
+.s4{grid-column:span 4} .s8{grid-column:span 8} .s12{grid-column:1/-1}
+.card{border:1px solid var(--line);border-top:3px solid var(--navy);border-radius:4px;padding:10px 14px 12px;min-width:0}
+.card h3{font-size:17px;margin:0 0 8px;color:var(--navy)}
+.card h3 .sub{font-weight:400;color:var(--muted);font-size:14px;margin-left:6px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:15px;margin:0} .kv dt{color:var(--muted)} .kv dd{margin:0}
+.big{font-size:19px;font-weight:700;margin:0 0 6px;line-height:1.25}
+.small{font-size:13.5px;color:var(--muted);line-height:1.4;margin:6px 0 0}
+.legend{font-size:13px;color:var(--muted);margin:8px 0 0;display:flex;flex-wrap:wrap;gap:4px 16px;align-items:center}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+
+/* chronic conditions: symbol + word, never colour alone */
+.flags{display:grid;grid-template-columns:1fr 1fr;gap:5px 14px;margin:0 0 8px;padding:0;list-style:none}
+.flags li{display:flex;align-items:center;gap:7px;font-size:14.5px}
+.yn{font-size:12.5px;font-weight:700;border-radius:3px;padding:1px 6px;min-width:44px;text-align:center;flex:none}
+.yn.y{background:#FDECEA;color:var(--high);border:1px solid #F3B8B2} .yn.n{background:#fff;color:#6B7280;border:1px solid var(--line)}
+
+/* tables */
+.tbl{width:100%;border-collapse:collapse;font-size:14.5px}
+.tbl th{font-weight:700;color:#333;text-align:left;font-size:13.5px;padding:5px 6px;border-bottom:2px solid var(--line);background:var(--soft);white-space:nowrap}
+.tbl td{padding:5px 6px;border-bottom:1px solid #EEF1F5;vertical-align:middle}
+.tbl .num{font-family:var(--num);font-size:17px;white-space:nowrap}
+.tbl .muted{color:var(--muted);font-size:13.5px}
+.tbl td.dt{white-space:nowrap}
+.tbl .grp td{background:#FAFBFD;font-weight:700;color:var(--navy);font-size:13.5px;padding-top:9px}
+.st{font-size:12.5px;border-radius:3px;padding:1px 7px;font-weight:700;white-space:nowrap;display:inline-block}
+.st.new{background:#E6F4EC;color:var(--ok)} .st.held{background:#FDECEA;color:var(--high)} .st.cont{background:#EEF1F5;color:#39414F}
+.st.chg{background:#FFF3DC;color:var(--warn)} .st.stop{background:#E9EBEF;color:#39414F}
+.flag{font-weight:700;white-space:nowrap} .flag.H{color:var(--high)} .flag.L{color:var(--low)} .flag.N{color:var(--ok)}
+.labs svg.spk{display:block;width:120px;height:32px}
+.hbtn{border:1px solid var(--line);background:#fff;border-radius:3px;padding:2px 8px;cursor:pointer;color:var(--navy);font-size:13px;white-space:nowrap}
+.hbtn[aria-expanded="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+tr.hist td{background:#FAFBFD;padding:10px 10px 14px}
+.histwrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:18px;align-items:start}
+.histwrap svg{display:block;width:100%;height:auto}
+.histlist{max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:3px;background:#fff}
+
+.micro{list-style:none;margin:0;padding:0}
+.micro li{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:6px 0;border-top:1px solid #EEF1F5;font-size:14.5px}
+.res{font-size:12.5px;border-radius:3px;padding:1px 7px;font-weight:700;align-self:start;white-space:nowrap}
+.res.pos{background:#FDECEA;color:var(--high)} .res.pend{background:#FFF3DC;color:var(--warn)} .res.neg{background:#E6F4EC;color:var(--ok)} .res.na{background:#EEF1F5;color:#39414F}
+
+.imgs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.img{margin:0} .img svg{display:block;width:100%;height:auto;border-radius:3px}
+.img figcaption{font-size:13.5px;line-height:1.35;margin-top:4px} .img figcaption b{display:block;font-size:14px}
+.open{margin-top:4px;font-size:12.5px;border:1px solid var(--line);background:#fff;border-radius:3px;padding:1px 7px;cursor:pointer;color:var(--navy)}
+.prior{list-style:none;margin:0;padding:0} .prior li{display:flex;gap:10px;padding:6px 0;border-bottom:1px solid #EEF1F5;align-items:flex-start}
+.prior svg{width:74px;flex:none;border-radius:3px} .prior p{margin:0;font-size:14px;line-height:1.35}
+
+.tl svg{display:block;width:100%;height:auto}
+.appts{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:6px 18px;list-style:none;margin:10px 0 0;padding:0}
+.appts li{font-size:14.5px;display:grid;grid-template-columns:auto 1fr;gap:10px}
+.appts time{font-family:var(--num);color:var(--navy);font-weight:700;white-space:nowrap}
+
+.regwrap{display:grid;grid-template-columns:minmax(0,680px) 1fr;gap:28px;align-items:center}
+#rbars svg{max-width:680px;margin:0 auto}
+svg text{font-family:var(--text)}
+
+/* research view */
+.rlayout{display:grid;grid-template-columns:250px 1fr;gap:20px}
+.filters{border-right:1px solid var(--line);padding-right:16px}
+.filters h2{font-size:18px;margin:2px 0 8px;color:var(--navy)}
+.filters fieldset{border:0;padding:0;margin:0 0 12px} .filters legend{font-weight:700;font-size:14.5px;margin-bottom:3px}
+.filters label{display:flex;gap:6px;align-items:center;font-size:14.5px;padding:1px 0} .filters .row{display:flex;gap:6px;align-items:center}
+.reset{border:1px solid var(--line);background:#fff;border-radius:4px;padding:4px 10px;cursor:pointer}
+.rhead h2{font-family:var(--num);font-size:32px;margin:0 0 4px} .rhead p{margin:0 0 12px;color:var(--muted);font-size:14.5px;max-width:80ch}
+.rgrid{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:start}
+.suppress{background:var(--soft);border-left:4px solid var(--navy);padding:10px 12px;font-size:14.5px}
+.tablewrap{max-height:420px;overflow:auto;border:1px solid var(--line);border-radius:4px}
+table.pts{width:100%;border-collapse:collapse;font-size:14px}
+table.pts th{position:sticky;top:0;background:#F3F6FA;text-align:left;font-weight:700;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.pts td{padding:5px 8px;border-bottom:1px solid #EEF1F5;white-space:nowrap}
+table.pts tbody tr{cursor:pointer} table.pts tbody tr:hover,table.pts tbody tr:focus{background:#EEF4FB;outline:none}
+.mini{display:inline-block;font-size:12px;border-radius:3px;padding:0 5px;margin-right:3px;background:#EEF1F5}
+.drawer{position:fixed;top:0;right:0;height:100vh;width:min(760px,100vw);background:#fff;box-shadow:-8px 0 30px rgba(10,20,50,.25);z-index:20;overflow:auto;padding:16px 18px 30px;transform:translateX(100%);transition:transform .22s ease}
+.drawer.open{transform:none} .drawer .x{position:sticky;top:0;float:right;border:1px solid var(--line);background:#fff;border-radius:4px;padding:3px 10px;cursor:pointer}
+.drawer h2{font-family:var(--num);font-size:28px;margin:0} .drawer .cover{margin-top:10px} .drawer .s4,.drawer .s8{grid-column:1/-1} .drawer .imgs{grid-template-columns:repeat(2,minmax(0,1fr))}
+.scrim{position:fixed;inset:0;background:rgba(10,20,40,.3);z-index:19;display:none} .scrim.open{display:block}
+.warning{font-size:13.5px;background:var(--soft);border-left:4px solid var(--navy);padding:6px 10px;margin:0 0 12px;display:flex;gap:10px;align-items:center;max-width:1100px}
+.warning button{margin-left:auto;border:1px solid #9AA6BA;background:#fff;border-radius:4px;padding:1px 8px;cursor:pointer;color:var(--navy)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 15px;border-radius:6px;font-size:14px;display:none;z-index:30;max-width:90vw}
+.scroll{overflow-x:auto}
+
+@media (max-width:1250px){ .s4{grid-column:span 6} .s8{grid-column:1/-1} .regwrap,.rgrid,.histwrap{grid-template-columns:1fr} .imgs{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:860px){ .rlayout{grid-template-columns:1fr} .filters{border-right:0;border-bottom:1px solid var(--line);padding:0 0 10px} .kpis{grid-template-columns:repeat(3,minmax(0,1fr))} .s4{grid-column:1/-1} }
+@media (max-width:640px){ body{padding:8px} .sheet{padding:14px 12px} .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} .banner h2{font-size:28px;padding-right:80px} .picker select{min-width:0;width:100%} .picker{width:100%} .mock{position:static;display:inline-block;margin-bottom:8px;transform:none} }
+@media (prefers-reduced-motion:reduce){ .drawer{transition:none} }
+</style>
+
+<header class="appbar">
+  <div class="brand"><h1>SCI 60+ Dashboard</h1><p>Royal Adelaide Hospital spinal service, wireframe v0.3</p></div>
+  <div class="seg" role="group" aria-label="View">
+    <button id="v-surg" aria-pressed="true">Surgeon view</button>
+    <button id="v-res" aria-pressed="false">Research view</button>
+  </div>
+  <label class="picker" id="pickerWrap">Patient <select id="picker" aria-label="Choose patient from Thursday meeting list"></select></label>
+  <span class="status">Refreshed Thu 10 Sep 2026, 07:00 hrs</span>
+</header>
+
+<main class="sheet">
+  <div class="mock" title="Fictional patients and values">MOCK DATA</div>
+
+  <section id="surgeon" aria-label="Patient cover page">
+    <div class="banner" id="banner"></div>
+    <div class="kpis" id="pkpis"></div>
+    <div class="cover" id="cover"></div>
+  </section>
+
+  <section id="research" aria-label="Research cohort" hidden>
+    <div class="warning" id="warn"><span>Aboriginal and Torres Strait Islander users are advised that this platform contains de-identified retrospective clinical statistics which may relate to deceased persons.</span><button id="warn-x">Dismiss</button></div>
+    <div class="rlayout">
+      <aside class="filters" aria-label="Filters"><h2>Filter patients</h2><div id="fbox"></div><button class="reset" id="reset">Clear filters</button></aside>
+      <div>
+        <div class="rhead">
+          <h2>Research Cohort, SCI 60+, 2016–2025</h2>
+          <p>De-identified: names, MRNs and dates are removed. Dates show as days since admission (Day 0 = day of admission). Select a patient to see their full record.</p>
+        </div>
+        <div class="kpis" id="rkpis"></div>
+        <div class="rgrid">
+          <div><h3 style="font-size:18px;font-weight:400;text-align:center;margin:0 0 4px;color:#333">Filtered patients vs all SCI 60+</h3><div id="rbars"></div></div>
+          <div>
+            <h3 style="font-size:18px;font-weight:400;margin:0 0 6px;color:#333" id="rcount"></h3>
+            <div class="tablewrap"><table class="pts"><thead><tr><th>Study ID</th><th>Age</th><th>Level</th><th>Comorbidity</th><th>Complications</th><th>Stay</th><th>30-day</th></tr></thead><tbody id="rtable"></tbody></table></div>
+            <p class="small">Estimated cost and full details open in the patient panel. Export gives a de-identified CSV of the filtered patients.</p>
+            <button class="reset" id="export">Export filtered patients (CSV)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dtitle"><button class="x" id="dx">Close</button><div id="dbody"></div></aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ================= basics and formatting ================= */
+const C={s1:'#3F4652',s2:'#C27A00',navy:'#26407A',grid:'#E3E6EB',muted:'#5B6270',high:'#B42318',low:'#1F5FA8',ok:'#256B4B',warn:'#8A5000',icu:'#2E7F8F'};
+const NS='http://www.w3.org/2000/svg';
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], WD=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const TODAY=new Date(2026,8,10);
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const fD=d=>`${WD[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`;          // always with year
+const fDs=d=>`${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`;
+const fT=m=>`${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')} hrs`;      // 24-hour, explicit
+const p2=v=>(v==null||isNaN(v))?'–':v.toFixed(2)+'%';                                               // 2 decimal places
+const aud=v=>'$'+Math.round(v).toLocaleString('en-AU');                                               // full dollars
+function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+const pick=(r,arr,w)=>{ if(!w) return arr[Math.floor(r()*arr.length)]; let u=r()*w.reduce((a,b)=>a+b,0); for(let i=0;i<arr.length;i++){u-=w[i]; if(u<=0) return arr[i];} return arr[arr.length-1]; };
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function tx(p,x,y,s,a={}){const t=el('text',Object.assign({x,y,fill:'#333'},a),p);t.textContent=s;return t;}
+const $=id=>document.getElementById(id);
+const toast=$('toast'); let tt; function say(m){toast.textContent=m;toast.style.display='block';clearTimeout(tt);tt=setTimeout(()=>toast.style.display='none',3800);}
+const pct=(n,d)=>d?n/d*100:0;
+
+const LEVELS=['C1–C4','C5–C8','T1–T12','L1–S5'];
+const COMORB=[['dementia','Dementia','Dem'],['hf','Heart failure','HF'],['kidney','Kidney failure','CKD'],['liver','Liver failure','Liver'],['chest','Chest disease (COPD)','Lung']];
+const COMPL=['UTI','Pneumonia','Pressure injury','VTE','Delirium'];
+const aisGroup=a=>(a==='A'||a==='B')?'A–B':'C–D';
+const ageBand=a=>a>=85?'85+':(Math.floor(a/5)*5)+'–'+(Math.floor(a/5)*5+4);
+const CDAY={Delirium:3,UTI:4,Pneumonia:5,'Pressure injury':8,VTE:6};
+const UNIT={surg:24000,icu:6800,ward:2900,comp:4500}; // mock proxy unit costs (AUD)
+function body(r,sex){ const h=sex==='Male'?165+Math.round(r()*20):152+Math.round(r()*17); const bmi=20+r()*11; return {h,w:Math.round(bmi*(h/100)**2)}; }
+
+/* ================= mock registry cohort (historical) ================= */
+function makeCohort(n){
+  const r=rng(20260910), out=[];
+  for(let i=0;i<n;i++){
+    const age=60+Math.floor(Math.pow(r(),1.25)*33), lv=pick(r,LEVELS,[38,27,20,15]), ais=pick(r,['A','B','C','D'],[12,10,30,48]);
+    const cm={dementia:r()<.05+(age-60)*.009,hf:r()<.18,kidney:r()<.2+(age-60)*.004,liver:r()<.04,chest:r()<.2,af:r()<.22,diabetes:r()<.25};
+    const cerv=lv.startsWith('C'), complete=aisGroup(ais)==='A–B', surgery=r()<(complete?.8:.6);
+    let icu=cerv&&complete?3+Math.floor(r()*10):(r()<.35?1+Math.floor(r()*3):0);
+    const comp=[];
+    if(r()<.3) comp.push('UTI');
+    if(r()<.12+(cerv&&complete?.2:0)+(cm.chest?.1:0)) comp.push('Pneumonia');
+    if(r()<.1+(complete?.08:0)) comp.push('Pressure injury');
+    if(r()<.04) comp.push('VTE');
+    if(r()<.15+(cm.dementia?.3:0)) comp.push('Delirium');
+    const ncm=['dementia','hf','kidney','liver','chest'].filter(k=>cm[k]).length;
+    const p30=.02+(age-60)*.0045+(lv==='C1–C4'&&complete?.22:0)+(comp.includes('Pneumonia')?.1:0)+ncm*.025;
+    const died30=r()<p30; let died1y=died30||r()<p30*1.3+.04;
+    let los=Math.round(9+r()*22+comp.length*6+(complete?9:0)+icu); if(died30) los=Math.min(los,3+Math.floor(r()*25));
+    icu=Math.min(icu,Math.max(los-1,0));
+    const sex=r()<.68?'Male':'Female', year=2016+Math.floor(r()*10);
+    if(year===2025&&!died30) died1y=null;
+    const cost=(surgery?UNIT.surg:0)+icu*UNIT.icu+Math.max(los-icu,0)*UNIT.ward+comp.length*UNIT.comp;
+    out.push({sid:'S2-'+String(1000+i*7+Math.floor(r()*6)).padStart(4,'0'),age,sex,lv,ais,cm,...body(r,sex),
+      premorbid:cm.dementia?pick(r,['Needs some help','Dependent'],[6,4]):pick(r,['Independent','Independent with walking aid','Needs some help'],[55,30,15]),
+      mech:age>74?pick(r,['Fall from standing','Fall from height','Road trauma'],[75,15,10]):pick(r,['Fall from standing','Fall from height','Road trauma','Other'],[45,25,22,8]),
+      surgery,icu,comp,los,cost,died30,died1y,year,maxDay:los,seed:Math.floor(r()*1e9)});
+  }
+  return out;
+}
+const COHORT=makeCohort(160);
+
+/* ================= current inpatients (identified) ================= */
+const HERO={id:true,name:'Harold Whitcombe',mrn:'M-204518',age:78,sex:'Male',dob:new Date(1948,2,14),bed:'Spinal ward, bed 7',consultant:'Dr K. Morrell',h:176,w:84,
+  admit:new Date(2026,8,4),admitMin:30,lv:'C1–C4',nli:'C4',ais:'C',mech:'Fall from standing at home',surgery:true,icu:2,
+  cm:{dementia:false,hf:true,kidney:true,liver:false,chest:true,af:true,diabetes:true},premorbid:'Independent with walking stick, lives with wife',
+  comp:['UTI','Pneumonia'],compNote:{Pneumonia:'suspected'},allergy:'Penicillin (rash)',seed:7,hero:true};
+function makeInpatients(){
+  const names=[['Margaret Ellery','Female',84],['Dennis Kowalczyk','Male',69],['Joan Pettigrew','Female',72],['Raymond Tan','Male',81],['Beverley Salisbury','Female',66]];
+  const r=rng(99), list=[HERO];
+  names.forEach(([nm,sex,age],i)=>{
+    const lv=pick(r,LEVELS,[40,30,18,12]), ais=pick(r,['A','B','C','D'],[10,12,33,45]);
+    const nli={'C1–C4':pick(r,['C3','C4']),'C5–C8':pick(r,['C5','C6','C7']),'T1–T12':pick(r,['T8','T10','T12']),'L1–S5':pick(r,['L1','L2'])}[lv];
+    const cm={dementia:age>80&&r()<.5,hf:r()<.3,kidney:r()<.35,liver:r()<.05,chest:r()<.3,af:r()<.3,diabetes:r()<.35};
+    const comp=COMPL.filter(()=>r()<.22);
+    list.push({id:true,name:nm,mrn:'M-2'+String(10000+Math.floor(r()*89999)),age,sex,...body(r,sex),dob:new Date(2026-age-(r()<.5?1:0),Math.floor(r()*12),1+Math.floor(r()*27)),
+      bed:`Spinal ward, bed ${2+i*3}`,consultant:pick(r,['Dr K. Morrell','Dr S. Varga','Dr P. Okafor']),admit:addDays(TODAY,-(4+Math.floor(r()*11))),admitMin:Math.floor(r()*1440),
+      lv,nli,ais,mech:age>74?'Fall from standing':pick(r,['Fall from height','Road trauma','Fall from standing']),surgery:r()<.7,icu:r()<.5?1+Math.floor(r()*3):0,
+      cm,premorbid:cm.dementia?'Needs help with daily activities':pick(r,['Independent','Independent with walking aid']),comp,compNote:{},allergy:r()<.3?'Codeine (nausea)':'No known allergies',seed:Math.floor(r()*1e9)});
+  });
+  list.forEach(p=>{ p.dayNow=Math.round((TODAY-p.admit)/864e5); p.maxDay=p.dayNow; });   // Day 0 = day of admission
+  return list;
+}
+const INPATIENTS=makeInpatients();
+
+/* ================= clinical detail builder ================= */
+const region=p=>p.lv.startsWith('C')?'cervical':p.lv.startsWith('T')?'thoracic':'lumbar';
+const nliOf=p=>p.nli||({'C1–C4':'C4','C5–C8':'C6','T1–T12':'T10','L1–S5':'L1'}[p.lv]);
+const surgeryText=p=>({cervical:p.lv==='C1–C4'?'C3–C6 posterior decompression and instrumented fusion':'C5–C7 anterior cervical discectomy and fusion',thoracic:'T9–L1 posterior instrumented fusion',lumbar:'L1–L3 posterior decompression and fusion'}[region(p)]);
+// sex-specific adult reference intervals (typical harmonised Australian ranges; replace with SA Pathology ranges in the build)
+function refs(sex){ const m=sex==='Male'; return [
+  {n:'Haemoglobin',u:'g/L',lo:m?130:115,hi:m?180:165,dec:0,base:m?134:124},
+  {n:'White cells',u:'×10⁹/L',lo:4.0,hi:11.0,dec:1,base:7.2},
+  {n:'CRP',u:'mg/L',lo:0,hi:5,dec:0,base:3,lt:true},
+  {n:'Sodium',u:'mmol/L',lo:135,hi:145,dec:0,base:139},
+  {n:'Potassium',u:'mmol/L',lo:3.5,hi:5.2,dec:1,base:4.4},
+  {n:'Creatinine',u:'µmol/L',lo:m?60:45,hi:m?110:90,dec:0,base:m?88:70},
+  {n:'Albumin',u:'g/L',lo:35,hi:50,dec:0,base:39}]; }
+const rangeText=t=>t.lt?`< ${t.hi} ${t.u}`:`${t.lo.toFixed(t.dec)} – ${t.hi.toFixed(t.dec)} ${t.u}`;
+const flagOf=(v,t)=>v>t.hi?'H':v<t.lo?'L':'N';
+const FLAG={H:['▲','High'],L:['▼','Low'],N:['✓','In range']};
+
+function detail(p){
+  const r=rng(p.seed||1), reg=region(p), has=k=>p.comp.includes(k), cl=d=>Math.max(0,Math.min(d,p.maxDay));
+  const cday=k=>cl(CDAY[k]);
+  const dx=p.hero?'Traumatic central cord syndrome, C4':({cervical:aisGroup(p.ais)==='C–D'?'Incomplete cervical spinal cord injury':'Complete cervical spinal cord injury',thoracic:'Thoracic spinal cord injury',lumbar:'Conus / lumbar spinal cord injury'}[reg]);
+  const icd={cervical:'S14.1',thoracic:'S24.1',lumbar:'S34.1'}[reg];
+  const surgDay=p.surgery?cl(1):null;
+  const penAllergy=(p.allergy||'').startsWith('Penicillin');
+  // ---- medications: frequency + started / changed / stopped dates (day offsets, 'pre' = before admission)
+  const M=[]; const add=(o)=>M.push(Object.assign({route:'Oral',start:'pre',change:null,end:null,note:''},o));
+  add({name:'Atorvastatin',dose:'40 mg',freq:'Once daily at night (20:00 hrs)',status:'cont'});
+  if(p.cm.af) add({name:'Apixaban',dose:'5 mg',freq:'Twice daily (08:00 and 20:00 hrs)',status:'held',end:0,endLabel:'Held from',note:'Held for surgery. Review on Day 10'});
+  if(p.cm.hf){ add({name:'Metoprolol succinate',dose:'47.5 mg',freq:'Once daily (08:00 hrs)',status:'cont'});
+               add({name:'Furosemide',dose:'20 mg',freq:'Once daily (08:00 hrs)',status:'chg',change:cl(2),note:'Was 40 mg. Reduced for renal function'}); }
+  if(p.cm.diabetes) add({name:'Metformin',dose:'500 mg',freq:'Twice daily with meals (08:00 and 18:00 hrs)',status:'held',end:0,endLabel:'Held from',note:'Held: renal function and contrast'});
+  if(p.cm.chest) add({name:'Tiotropium',dose:'18 mcg',route:'Inhaled',freq:'Once daily (08:00 hrs)',status:'cont'});
+  if(p.cm.dementia) add({name:'Donepezil',dose:'5 mg',freq:'Once daily at night (20:00 hrs)',status:'cont'});
+  if(p.cm.kidney) add({name:'Calcitriol',dose:'0.25 mcg',freq:'Once daily (08:00 hrs)',status:'cont'});
+  if(p.cm.liver) add({name:'Lactulose',dose:'20 mL',freq:'Twice daily (08:00 and 20:00 hrs)',status:'cont'});
+  add({name:'Enoxaparin',dose:p.cm.kidney?'20 mg':'40 mg',route:'Subcutaneous',freq:'Once daily (18:00 hrs)',status:'new',start:p.surgery?cl(1):0,note:p.cm.kidney?'Renal dose, VTE prophylaxis':'VTE prophylaxis'});
+  add({name:'Paracetamol',dose:'1 g',freq:'Four times daily (06:00, 12:00, 18:00, 22:00 hrs)',status:'new',start:0});
+  add({name:'Oxycodone',dose:'2.5–5 mg',freq:'When required, every 4 hours (max 20 mg in 24 hours)',status:'new',start:p.surgery?cl(2):0});
+  add({name:'Pregabalin',dose:p.cm.kidney?'25 mg':'75 mg',freq:'Twice daily (08:00 and 20:00 hrs)',status:'new',start:cl(3),note:'Neuropathic pain'+(p.cm.kidney?', renal dose':'')});
+  add({name:'Macrogol',dose:'1 sachet',freq:'Once daily (08:00 hrs)',status:'new',start:cl(1),note:'Bowel care'});
+  if(p.cm.diabetes) add({name:'Insulin aspart',dose:'Sliding scale',route:'Subcutaneous',freq:'Before meals and at bedtime, per blood glucose',status:'new',start:0});
+  if(has('UTI')) add({name:'Trimethoprim',dose:'300 mg',freq:'Once daily (20:00 hrs)',status:'new',start:cday('UTI'),end:cday('UTI')+4,endLabel:'Planned end',note:'UTI, 5-day course'});
+  if(has('Pneumonia')) add(penAllergy?{name:'Ceftriaxone',dose:'1 g',route:'Intravenous',freq:'Once daily (10:00 hrs)',status:'new',start:cday('Pneumonia'),end:cday('Pneumonia')+2,endLabel:'Review',note:'Suspected pneumonia. Review with chest X-ray and cultures'}
+                                  :{name:'Amoxicillin–clavulanate',dose:'875/125 mg',freq:'Twice daily (08:00 and 20:00 hrs)',status:'new',start:cday('Pneumonia'),end:cday('Pneumonia')+4,endLabel:'Planned end',note:'Pneumonia'});
+  if(p.surgery){ add({name:'Cefazolin',dose:'2 g',route:'Intravenous',freq:'Every 8 hours',status:'stop',start:cl(1),end:cl(2),endLabel:'Stopped',note:'Surgical prophylaxis, 24 hours'});
+                 add({name:'Morphine PCA',dose:'1 mg bolus, 5-minute lockout',route:'Intravenous',freq:'Patient-controlled',status:'stop',start:cl(1),end:cl(2),endLabel:'Stopped',note:'Changed to oral oxycodone'}); }
+  // ---- imaging (day offset + time in minutes)
+  const imgs=[{k:'CT',reg,day:0,min:p.admitMin+45,t:`CT ${reg} spine`,rep:reg==='cervical'?'No fracture. Multilevel spondylosis with canal narrowing C3–C5.':'Fracture with retropulsion; canal compromise.'},
+              {k:'MRI',reg,day:0,min:Math.min(p.admitMin+190,1430),t:`MRI ${reg} spine`,rep:reg==='cervical'?'Cord oedema C3–C5 with disc-osteophyte compression.':'Cord signal change at level of injury.'}];
+  if(p.surgery) imgs.push({k:'XR',reg,day:cl(2),min:545,t:`X-ray ${reg} spine, post-op`,rep:'Instrumentation in satisfactory position.'});
+  imgs.push(has('Pneumonia')?{k:'CXR',reg:'chest',day:cday('Pneumonia'),min:980,t:'Chest X-ray',rep:'New right lower zone opacity, possible consolidation.'}:{k:'CXR',reg:'chest',day:cl(1),min:620,t:'Chest X-ray',rep:'No acute changes.'});
+  const prior=reg==='cervical'?[{k:'MRI',reg,day:-815,t:'MRI cervical spine',rep:'Moderate canal stenosis C3–C5, no cord signal change then.',src:'Private radiology'},{k:'XR',reg,day:-1750,t:'X-ray cervical spine',rep:'Degenerative changes, alignment preserved.',src:'RAH'}]
+                               :[{k:'XR',reg,day:-1300,t:`X-ray ${reg} spine`,rep:'Osteopenia and degenerative change.',src:'RAH'}];
+  if(p.cm.chest) prior.push({k:'CT',reg:'chest',day:-580,t:'CT chest',rep:'Emphysema, no mass. Useful baseline for new opacity.',src:'RAH'});
+  // ---- labs: 7 daily results in window + earlier results (history)
+  const infect=has('Pneumonia')||has('UTI'), k=p.cm.kidney;
+  const d0=p.id?Math.max(0,p.maxDay-6):0, dN=p.id?p.maxDay:Math.min(6,p.maxDay), days=[]; for(let d=d0;d<=dN;d++) days.push(d);
+  const shape={Haemoglobin:j=>p.surgery?(j<3?-(j/3)*18:-18+(j-3)*1.5):-4, 'White cells':j=>infect&&j>=4?(j-3)*1.8:0,
+    CRP:j=>infect?[8,43,74,63,55,80,116][j]:[20,30,24,16,11,8,6][j], Sodium:j=>(j>1&&j<5)?-4:0, Potassium:j=>k?j*.12:0, Creatinine:j=>k?[0,8,23,17,4,1,12][j]:[0,4,8,5,2,1,2][j], Albumin:j=>-j*1.4};
+  const labs=refs(p.sex).map(t=>{
+    const base=t.n==='Creatinine'&&k?t.base+60:t.n==='Potassium'&&k?4.7:t.base;
+    const res=days.map((d,j)=>{ let v=t.n==='CRP'?shape.CRP(j)+(r()-.5)*6:base+shape[t.n](j)+(r()-.5)*(t.dec?0.4:4); v=Math.max(t.n==='CRP'?1:0.5,v); v=+v.toFixed(t.dec);
+      return {day:d,min:d===0?(p.admitMin+20)%1440:360+Math.floor(r()*40),v,src:'SA Pathology (inpatient)'}; });
+    const hist=[-540,-365,-180].map(d=>({day:d,min:540+Math.floor(r()*120),v:+Math.max(1,(t.n==='CRP'?3+r()*4:base+(r()-.5)*(t.dec?0.5:6))).toFixed(t.dec),src:'SA Pathology (outpatient)'}));
+    return Object.assign({},t,{res,hist:hist.concat(res)});
+  });
+  const micro=[
+    {n:'Urine culture',cDay:has('UTI')?cl(CDAY.UTI-1):cl(2),cMin:430,rDay:has('UTI')?cday('UTI'):cl(3),rMin:850,res:has('UTI')?['pos','E. coli >10⁸/L, sensitive to trimethoprim']:['neg','No significant growth']},
+    has('Pneumonia')?{n:'Sputum culture',cDay:cday('Pneumonia'),cMin:990,rDay:null,res:['pend','Collected, result pending']}:{n:'Sputum culture',res:['na','Not collected this admission']},
+    infect?{n:'Blood cultures ×2',cDay:cday(has('Pneumonia')?'Pneumonia':'UTI'),cMin:1000,rDay:null,res:['pend','No growth at 24 hours (final at 5 days)']}
+          :(p.maxDay>=6?{n:'Blood cultures ×2',cDay:1,cMin:420,rDay:6,rMin:600,res:['neg','No growth at 5 days']}:{n:'Blood cultures ×2',cDay:cl(1),cMin:420,rDay:null,res:['pend','No growth so far (final at 5 days)']})];
+  const ev=[{d:0,t:'Admitted via ED',kind:'m'}];
+  if(p.surgery) ev.push({d:cl(1),t:'Surgery',kind:'m'});
+  const icuStart=p.surgery?cl(1):0;
+  if(p.icu) ev.push({d:Math.min(icuStart+p.icu,p.maxDay),t:'Spinal ward',kind:'m'});
+  p.comp.forEach(c=>ev.push({d:cday(c),t:c+(p.compNote&&p.compNote[c]==='suspected'?' (suspected)':''),kind:'c'}));
+  return {dx,icd,surgDay,M,imgs,prior,labs,micro,ev,icuStart};
+}
+
+/* ================= renderers ================= */
+const when=(p,day,mode,min)=>(mode==='id'?fD(addDays(p.admit,day)):(day<0?`${-day} days before admission`:`Day ${day}`))+(min!=null?`, ${fT(min)}`:'');
+
+function thumb(k,reg){
+  const s=el('svg',{viewBox:'0 0 150 108',role:'img','aria-label':`${k} ${reg} image placeholder`});
+  el('rect',{x:0,y:0,width:150,height:108,fill:k==='MRI'?'#1B2230':'#141820'},s);
+  const g=k==='MRI'?'#8D99AD':k==='CT'?'#B7BEC9':'#D5D9DF';
+  if(reg==='chest'){ el('ellipse',{cx:52,cy:56,rx:26,ry:38,fill:'#2A303B',stroke:g,'stroke-width':1.5},s); el('ellipse',{cx:98,cy:56,rx:26,ry:38,fill:'#2A303B',stroke:g,'stroke-width':1.5},s); el('rect',{x:71,y:14,width:8,height:84,fill:g,opacity:.6},s); }
+  else{ for(let i=0;i<7;i++){ const cx=75+10*Math.sin(i*.7+(reg==='cervical'?0:1.5)); el('rect',{x:cx-12,y:10+i*13,width:24,height:10,rx:3,fill:g,opacity:.85},s);} el('rect',{x:84,y:8,width:5,height:92,fill:k==='MRI'?'#C9D3E2':'#5A6272',opacity:.5},s); }
+  tx(s,6,102,k,{fill:'#E8ECF2','font-size':12,'font-weight':700}); tx(s,144,102,'schematic',{fill:'#8993A3','font-size':10,'text-anchor':'end'});
+  return s.outerHTML;
+}
+// marker shape by flag so the state never depends on colour alone
+function marker(parent,x,y,f,size=4.5){
+  const col=f==='H'?C.high:f==='L'?C.low:C.navy;
+  if(f==='H') return el('path',{d:`M${x} ${y-size-1} L${x+size+1} ${y+size} L${x-size-1} ${y+size} Z`,fill:col},parent);
+  if(f==='L') return el('path',{d:`M${x} ${y+size+1} L${x+size+1} ${y-size} L${x-size-1} ${y-size} Z`,fill:col},parent);
+  return el('circle',{cx:x,cy:y,r:size-0.5,fill:col},parent);
+}
+function spark(t){
+  const v=t.res.map(r=>r.v), w=120,h=32, mn=Math.min(...v,t.lo), mx=Math.max(...v,t.hi), Y=x=>h-5-(h-10)*(x-mn)/((mx-mn)||1), X=i=>6+(w-14)*i/Math.max(1,v.length-1);
+  const s=el('svg',{viewBox:`0 0 ${w} ${h}`,class:'spk','aria-hidden':'true'});
+  el('rect',{x:0,y:Y(t.hi),width:w,height:Math.max(0,Y(t.lo)-Y(t.hi)),fill:'#E3F1E8'},s);
+  el('polyline',{fill:'none',stroke:'#8A93A3','stroke-width':1.5,points:v.map((x,i)=>X(i)+','+Y(x)).join(' ')},s);
+  marker(s,X(v.length-1),Y(v[v.length-1]),flagOf(v[v.length-1],t),4);
+  return s.outerHTML;
+}
+function historyChart(t,p,mode){
+  const pts=t.hist, W=760,H=300,L=64,R=16,T=16,B=92, pw=W-L-R, ph=H-T-B;
+  const vals=pts.map(x=>x.v), raw0=Math.min(...vals,t.lo), raw1=Math.max(...vals,t.hi), span=raw1-raw0||1, st=[1,2,2.5,5,10].map(m=>m*10**Math.floor(Math.log10(span/5))).find(v=>span/v<=6);
+  const mn=Math.floor(raw0/st)*st, mx=Math.ceil(raw1/st)*st, y=v=>T+ph*(1-(v-mn)/(mx-mn)), x=i=>L+pw*(i+.5)/pts.length;
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':`${t.n} results over time`});
+  el('rect',{x:L,y:y(t.hi),width:pw,height:Math.max(0,y(Math.max(t.lo,mn))-y(Math.min(t.hi,mx))),fill:'#E3F1E8'},s);
+  tx(s,W-R-4,y(t.hi)+14,`Reference range ${rangeText(t)}`,{'text-anchor':'end','font-size':12.5,fill:C.ok});
+  for(let v=mn;v<=mx+1e-9;v+=st){ el('line',{x1:L,x2:W-R,y1:y(v),y2:y(v),stroke:C.grid},s); tx(s,L-8,y(v)+4,+v.toFixed(2),{'text-anchor':'end','font-size':12.5}); }
+  const g=el('g',{transform:`translate(16 ${T+ph/2}) rotate(-90)`},s); tx(g,0,0,`${t.n} (${t.u})`,{'text-anchor':'middle','font-size':13.5});
+  el('polyline',{fill:'none',stroke:'#8A93A3','stroke-width':1.4,points:pts.map((q,i)=>x(i)+','+y(q.v)).join(' ')},s);
+  pts.forEach((q,i)=>{ marker(s,x(i),y(q.v),flagOf(q.v,t),5); const gg=el('g',{transform:`translate(${x(i)+4} ${T+ph+12}) rotate(-40)`},s);
+    tx(gg,0,0,mode==='id'?fDs(addDays(p.admit,q.day)):(q.day<0?`${q.day}`:`Day ${q.day}`),{'text-anchor':'end','font-size':11.5}); });
+  if(pts.length>3){ const xi=x(2.5); el('line',{x1:xi,x2:xi,y1:T,y2:T+ph,stroke:'#9AA6BA','stroke-dasharray':'3 3'},s); tx(s,xi+4,T+12,'This admission',{'font-size':12,fill:C.muted}); }
+  tx(s,L+pw/2,H-6,mode==='id'?'Collection date':'Days relative to admission',{'text-anchor':'middle','font-size':13.5});
+  return s.outerHTML;
+}
+
+// paired bars (kept Medicare design): charcoal solid vs amber hatched, 2-dp labels, axis titles, legend
+let patId=0;
+function pairedBars(host,cats,a,b,o){
+  const W=680,rowH=48,left=205,right=70,top=8,H=top+cats.length*rowH+104, bh=16, x=v=>left+(W-left-right)*v/100, id='hatch'+(patId++);
+  const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':o.label}); host.innerHTML=''; host.appendChild(s);
+  const d=el('defs',{},s), pt=el('pattern',{id,width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},d);
+  el('rect',{width:6,height:6,fill:C.s2},pt); el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'#fff','stroke-width':2.2},pt);
+  cats.forEach((c,i)=>{ const y=top+i*rowH+(rowH-2*bh)/2-2;
+    tx(s,left-10,y+bh+5,c,{'text-anchor':'end','font-size':15.5});
+    el('rect',{x:left,y,width:Math.max(0,x(a[i])-left),height:bh,fill:C.s1},s);
+    el('rect',{x:left,y:y+bh+1,width:Math.max(0,x(b[i]??0)-left),height:bh,fill:`url(#${id})`,stroke:C.s2,'stroke-width':1},s);
+    tx(s,x(a[i])+5,y+bh-3,p2(a[i]),{'font-size':12.5,fill:'#333'});
+    tx(s,x(b[i]??0)+5,y+bh*2-2,b[i]==null?'n<5':p2(b[i]),{'font-size':12.5,fill:'#333'}); });
+  const yb=top+cats.length*rowH; el('line',{x1:left,y1:top,x2:left,y2:yb,stroke:'#888'},s); el('line',{x1:left,y1:yb,x2:W-right,y2:yb,stroke:'#888'},s);
+  [0,25,50,75,100].forEach(t=>{ el('line',{x1:x(t),x2:x(t),y1:yb,y2:yb+5,stroke:'#888'},s); tx(s,x(t),yb+20,t+'.00%',{'text-anchor':'middle','font-size':13}); });
+  tx(s,(left+W-right)/2,yb+42,'% of patients',{'text-anchor':'middle','font-size':14.5,'font-weight':600});
+  const g=el('g',{transform:`translate(14 ${top+(yb-top)/2}) rotate(-90)`},s); tx(g,0,0,'Outcome or event',{'text-anchor':'middle','font-size':14.5,'font-weight':600});
+  el('rect',{x:left,y:yb+62,width:22,height:13,fill:C.s1},s); tx(s,left+28,yb+73,`${o.a} (solid bar)`,{'font-size':14});
+  el('rect',{x:left+240,y:yb+62,width:22,height:13,fill:`url(#${id})`,stroke:C.s2},s); tx(s,left+268,yb+73,`${o.b} (striped bar)`,{'font-size':14});
+}
+
+/* ================= similar patients ================= */
+const BANDS=['60–64','65–69','70–74','75–79','80–84','85+'];
+function simBands(age){ return BANDS.filter(b=>{ const s=+b.slice(0,2), e=b==='85+'?120:s+4; return e>=age-6&&s<=age+6; }); }
+function similar(p){ const bands=simBands(p.age), lo=bands[0].slice(0,2), hi=bands[bands.length-1];
+  return {s:COHORT.filter(q=>q.lv===p.lv&&bands.includes(ageBand(q.age))&&aisGroup(q.ais)===aisGroup(p.ais)),def:`aged ${hi.endsWith('+')?lo+' and over':lo+'–'+hi.slice(-2)}, injury level ${p.lv}, AIS ${aisGroup(p.ais)}`}; }
+function rates(list){ const n=list.length||1, k=list.filter(q=>q.died1y!==null); return [pct(list.filter(q=>q.died30).length,n),pct(k.filter(q=>q.died1y).length,k.length),pct(list.filter(q=>q.comp.includes('Pneumonia')).length,n),pct(list.filter(q=>q.comp.includes('UTI')).length,n),pct(list.filter(q=>q.comp.includes('Pressure injury')).length,n),pct(list.filter(q=>q.icu>0).length,n),pct(list.filter(q=>q.surgery).length,n)]; }
+const RATE_CATS=['30-day mortality','1-year mortality','Pneumonia','UTI','Pressure injury','ICU admission','Surgery'];
+
+/* ================= cover cards ================= */
+const STATUS={new:['+','New'],cont:['=','Continued'],chg:['Δ','Changed'],held:['‖','Held'],stop:['■','Stopped']};
+const MICRO={pos:['!','Positive'],pend:['…','Pending'],neg:['✓','Negative'],na:['–','Not done']};
+function cardsHTML(p,mode,D){
+  const w=(d,min)=>when(p,d,mode,min), wd=(d,min)=>mode==='id'?`${when(p,d,mode,min)} (Day ${d})`:when(p,d,mode,min);
+  const dxCard=`<article class="card s4"><h3>Principal diagnosis</h3><p class="big">${D.dx}</p>
+    <dl class="kv"><dt>ICD-10-AM</dt><dd>${D.icd}</dd><dt>Neurological level</dt><dd>${nliOf(p)}, AIS ${p.ais}</dd><dt>Mechanism</dt><dd>${p.mech}</dd>
+    <dt>Admitted</dt><dd>${wd(0,p.admitMin??null)}</dd><dt>Operation</dt><dd>${p.surgery?`${surgeryText(p)}, ${wd(D.surgDay)}`:'Non-operative, collar or brace'}</dd></dl></article>`;
+  const other=[p.cm.af&&'Atrial fibrillation',p.cm.diabetes&&'Type 2 diabetes'].filter(Boolean);
+  const chronic=`<article class="card s4"><h3>Chronic conditions <span class="sub">registry risk factors</span></h3>
+    <ul class="flags">${COMORB.map(([k,l])=>`<li><span class="yn ${p.cm[k]?'y':'n'}">${p.cm[k]?'✔ Yes':'✕ No'}</span>${l}</li>`).join('')}</ul>
+    <dl class="kv"><dt>Other</dt><dd>${other.join(', ')||'None recorded'}</dd><dt>Before injury</dt><dd>${p.premorbid}</dd></dl>
+    <p class="legend"><span>✔ Yes = condition recorded</span><span>✕ No = not recorded</span></p></article>`;
+  const micro=`<article class="card s4"><h3>Body fluid results</h3><ul class="micro">${D.micro.map(m=>`<li><span><b>${m.n}</b><br>${m.cDay!=null?`Collected ${w(m.cDay,m.cMin)}<br>`:''}${m.rDay!=null?`Reported ${w(m.rDay,m.rMin)}<br>`:''}<span class="small" style="margin:0">${m.res[1]}</span></span><span class="res ${m.res[0]}">${MICRO[m.res[0]].join(' ')}</span></li>`).join('')}</ul>
+    <p class="legend"><span>! Positive</span><span>… Pending</span><span>✓ Negative</span><span>– Not done</span></p></article>`;
+  // labs table
+  const lastDay=D.labs[0].res[D.labs[0].res.length-1].day, firstDay=D.labs[0].res[0].day;
+  const labRows=D.labs.map((t,i)=>{ const L=t.res[t.res.length-1], P=t.res[t.res.length-2], f=flagOf(L.v,t);
+    return `<tr><td><b>${t.n}</b></td><td>${spark(t)}</td><td class="num">${L.v.toFixed(t.dec)} <span class="muted">${t.u}</span></td><td class="muted">${w(L.day,L.min)}</td>
+      <td>${rangeText(t)}</td><td><span class="flag ${f}">${FLAG[f][0]} ${FLAG[f][1]}</span></td>
+      <td class="muted">${P?`${P.v.toFixed(t.dec)} (${mode==='id'?fDs(addDays(p.admit,P.day)):'Day '+P.day})`:'–'}</td>
+      <td><button class="hbtn" aria-expanded="false" data-h="${mode}-${i}">Show history (${t.hist.length})</button></td></tr>
+      <tr class="hist" id="h-${mode}-${i}" hidden><td colspan="8"><div class="histwrap"><div>${historyChart(t,p,mode)}</div>
+      <div class="histlist"><table class="tbl"><thead><tr><th>Collected</th><th>Result</th><th>Status</th><th>Source</th></tr></thead><tbody>
+      ${[...t.hist].reverse().map(q=>{const ff=flagOf(q.v,t);return `<tr><td class="muted">${w(q.day,q.min)}</td><td class="num">${q.v.toFixed(t.dec)}</td><td><span class="flag ${ff}">${FLAG[ff][0]} ${FLAG[ff][1]}</span></td><td class="muted">${q.src}</td></tr>`;}).join('')}
+      </tbody></table></div></div></td></tr>`; }).join('');
+  const labs=`<article class="card s12 labs"><h3>Blood tests <span class="sub">${mode==='id'?'last 7 days':'first 7 days of admission'}, ${wd(firstDay)} to ${wd(lastDay)}</span></h3>
+    <div class="scroll"><table class="tbl"><thead><tr><th>Test</th><th>Trend over the period</th><th>Latest result</th><th>Collected</th><th>Reference range</th><th>Status</th><th>Previous result</th><th>Past results</th></tr></thead><tbody>${labRows}</tbody></table></div>
+    <p class="legend"><span><b style="color:${C.high}">▲</b> High, above range</span><span><b style="color:${C.low}">▼</b> Low, below range</span><span><b style="color:${C.navy}">●</b> / ✓ In range</span><span><i style="display:inline-block;width:18px;height:11px;background:#E3F1E8;border:1px solid #BFDCC8"></i> Shaded band = reference range</span><span>Ranges are typical adult values; the build will use SA Pathology ranges.</span></p></article>`;
+  // medications table
+  const grp=[['Active',m=>['new','cont','chg'].includes(m.status)],['Held since admission',m=>m.status==='held'],['Stopped this admission',m=>m.status==='stop']];
+  const dcell=d=>d==='pre'?'Before admission':d==null?'–':wd(d);
+  const medRows=grp.map(([g,f])=>{ const rows=D.M.filter(f).sort((a,b)=>(a.start==='pre'?-1:a.start)-(b.start==='pre'?-1:b.start)); if(!rows.length) return '';
+    return `<tr class="grp"><td colspan="7">${g} (${rows.length})</td></tr>`+rows.map(m=>`<tr><td><span class="st ${m.status}">${STATUS[m.status].join(' ')}</span></td>
+      <td><b>${m.name}</b> ${m.dose}<br><span class="muted">${m.route}</span></td><td>${m.freq}</td><td class="muted dt">${dcell(m.start)}</td>
+      <td class="muted dt">${m.change!=null?dcell(m.change):'–'}</td><td class="muted">${m.end!=null?`${m.endLabel||'Ends'}: ${dcell(m.end)}`:'Ongoing'}</td><td class="muted">${m.note||''}</td></tr>`).join(''); }).join('');
+  const active=D.M.filter(m=>['new','cont','chg'].includes(m.status)).length;
+  const meds=`<article class="card s12"><h3>Medications <span class="sub">${active} active, including medicines taken before admission</span></h3>
+    <div class="scroll"><table class="tbl"><thead><tr><th>Status</th><th>Medication, dose, route</th><th>Frequency</th><th>Started</th><th>Changed</th><th>Stopped or ends</th><th>Note</th></tr></thead><tbody>${medRows}</tbody></table></div>
+    <p class="legend"><span>+ New this admission</span><span>= Continued from before admission</span><span>Δ Dose or frequency changed</span><span>‖ Held (paused)</span><span>■ Stopped</span></p></article>`;
+  const imgs=`<article class="card s8"><h3>Imaging this admission</h3><div class="imgs">${D.imgs.map(im=>`<figure class="img">${thumb(im.k,im.reg)}<figcaption><b>${im.t}</b>${wd(im.day,im.min)}<br>${im.rep}<br><button class="open" data-pacs>Open in PACS</button></figcaption></figure>`).join('')}</div></article>`;
+  const prior=`<article class="card s4"><h3>Prior related imaging</h3><ul class="prior">${D.prior.map(im=>`<li>${thumb(im.k,im.reg)}<p><b>${im.t}</b><br>${mode==='id'?fD(addDays(p.admit,im.day)):when(p,im.day,mode)}<br>${im.rep}<br><span class="small">${mode==='id'?im.src+'. ':''}<button class="open" data-cmp>Compare with current</button></span></p></li>`).join('')}</ul></article>`;
+  return {dxCard,chronic,micro,labs,meds,imgs,prior};
+}
+
+/* ================= timeline ================= */
+function timelineSVG(p,mode,D,endDay,W=1400){
+  const H=172,L=30,R=30,x=d=>L+(W-L-R)*d/endDay, axisY=78, s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':'Admission timeline'});
+  const defs=el('defs',{},s), pt=el('pattern',{id:'icuH'+mode,width:7,height:7,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},defs);
+  el('rect',{width:7,height:7,fill:'#CFE7EC'},pt); el('line',{x1:0,y1:0,x2:0,y2:7,stroke:C.icu,'stroke-width':2},pt);
+  el('line',{x1:L,x2:W-R,y1:axisY,y2:axisY,stroke:'#C9D0DA','stroke-width':4},s);
+  if(mode==='id') el('line',{x1:L,x2:x(p.dayNow),y1:axisY,y2:axisY,stroke:C.navy,'stroke-width':4},s);
+  const step=endDay<=(W>900?18:16)?1:Math.max(2,Math.ceil(endDay/(W>900?9:8)));
+  for(let d=0;d<=endDay;d++){ el('line',{x1:x(d),x2:x(d),y1:axisY-5,y2:axisY+5,stroke:'#9AA6BA'},s);
+    if(d%step===0){ tx(s,x(d),axisY+22,`Day ${d}`,{'text-anchor':'middle','font-size':13.5,'font-weight':700,fill:'#26407A'}); if(mode==='id') tx(s,x(d),axisY+38,fDs(addDays(p.admit,d)),{'text-anchor':'middle','font-size':12.5,fill:C.muted}); } }
+  if(p.icu){ const a=x(D.icuStart), b=x(Math.min(D.icuStart+p.icu,endDay)); el('rect',{x:a,y:axisY+50,width:b-a,height:18,fill:`url(#icuH${mode})`,stroke:C.icu},s);
+    tx(s,b+8,axisY+63,`ICU stay, Day ${D.icuStart} to Day ${D.icuStart+p.icu} (${p.icu} days)`,{'font-size':13,fill:'#1D5561'}); }
+  const lanes=[18,38,58], laneEnd=[-1e9,-1e9,-1e9], evs=[...D.ev];
+  if(mode!=='id'&&p.los!=null) evs.push({d:Math.min(p.los,endDay),t:p.died30?'Died':'Discharged',kind:'o'});
+  evs.sort((a,b)=>a.d-b.d).forEach(e=>{ const cx=x(e.d), label=`${e.kind==='c'?'▲ ':e.kind==='o'?'■ ':'● '}${e.t} (Day ${e.d})`, wdt=label.length*7.4, x0=e.d===0?cx-6:Math.min(cx-wdt/2,W-R-wdt);
+    let li=laneEnd.findIndex(v=>v<x0-12); if(li<0) li=laneEnd.indexOf(Math.min(...laneEnd)); laneEnd[li]=x0+wdt;
+    if(e.kind==='c') el('path',{d:`M${cx} ${axisY-9} L${cx+9} ${axisY+7} L${cx-9} ${axisY+7} Z`,fill:C.s2,stroke:'#fff','stroke-width':1.5},s);
+    else if(e.kind==='o') el('rect',{x:cx-6,y:axisY-6,width:12,height:12,fill:'#39414F'},s);
+    else el('circle',{cx,cy:axisY,r:7,fill:C.navy,stroke:'#fff','stroke-width':2},s);
+    const ly=lanes[li]; el('line',{x1:cx,x2:cx,y1:ly+4,y2:axisY-9,stroke:'#C9D0DA'},s);
+    tx(s,e.d===0?cx-6:x0+wdt/2,ly,label,{'text-anchor':e.d===0?'start':'middle','font-size':13.5,fill:e.kind==='c'?'#6A3F00':e.kind==='o'?'#39414F':'#26407A','font-weight':600}); });
+  if(mode==='id'){ const cx=x(p.dayNow); el('line',{x1:cx,x2:cx,y1:4,y2:axisY+8,stroke:C.high,'stroke-width':2,'stroke-dasharray':'5 4'},s); tx(s,cx+6,12,`Today, Day ${p.dayNow}`,{'font-size':13,fill:C.high,'font-weight':700}); }
+  return s.outerHTML;
+}
+const tlLegend=mode=>`<p class="legend"><span><b style="color:${C.navy}">●</b> Milestone</span><span><b style="color:${C.s2}">▲</b> Complication</span><span><i style="display:inline-block;width:22px;height:11px;background:repeating-linear-gradient(45deg,#CFE7EC 0 3px,${C.icu} 3px 5px);border:1px solid ${C.icu}"></i> ICU stay</span>${mode==='id'?`<span><b style="color:${C.high}">┆</b> Today</span>`:'<span>■ Discharge or death</span>'}<span>Day 0 = day of admission</span></p>`;
+
+/* ================= surgeon view ================= */
+function renderSurgeon(p){
+  const D=detail(p), c=cardsHTML(p,'id',D), sim=similar(p), rs=rates(sim.s), ra=rates(COHORT);
+  const wardDays=Math.max(p.dayNow-p.icu,0), est=(p.surgery?UNIT.surg:0)+p.icu*UNIT.icu+wardDays*UNIT.ward+p.comp.length*UNIT.comp;
+  const bmi=p.w/(p.h/100)**2, compTxt=p.comp.length?p.comp.map(k=>k+(p.compNote[k]==='suspected'?' (suspected)':'')).join(', '):'None recorded';
+  $('banner').innerHTML=`<h2>${esc(p.name)}<small>MRN ${p.mrn}</small></h2>
+    <div class="meta"><span><b>Age</b>${p.age}, ${p.sex.toLowerCase()}</span><span><b>DOB</b>${fDs(p.dob)}</span><span><b>Height</b>${p.h} cm</span><span><b>Weight</b>${p.w} kg (measured ${fD(p.admit)})</span><span><b>BMI</b>${bmi.toFixed(1)} kg/m²</span></div>
+    <div class="meta"><span><b>Location</b>${p.bed}</span><span><b>Admitted</b>${fD(p.admit)}, ${fT(p.admitMin)}</span><span><b>Consultant</b>${p.consultant}</span></div>
+    <p class="conv">Day 0 = day of admission. Dates include the year. Times use the 24-hour clock (Adelaide time).</p>
+    <div class="chips">${p.allergy&&p.allergy!=='No known allergies'?`<span class="chip red">! Allergy: ${p.allergy}</span>`:'<span class="chip">No known allergies</span>'}
+      ${D.M.some(m=>m.status==='held'&&m.name==='Apixaban')?'<span class="chip amber">‖ Anticoagulant held: apixaban</span>':''}
+      ${p.comp.length?`<span class="chip amber">▲ Active: ${compTxt}</span>`:''}<span class="chip log">Identified view. Access is logged.</span></div>`;
+  $('pkpis').innerHTML=[
+    ['Injury',`${nliOf(p)}, AIS ${p.ais}`,p.hero?'Central cord syndrome':p.lv],
+    ['Day of admission (admitted = Day 0)',`Day ${p.dayNow}`,p.surgery?`Post-op day ${p.dayNow-D.surgDay}`:'Non-operative'],
+    ['Complications this admission',p.comp.length,p.comp.length?compTxt:'None'],
+    ['Estimated cost to date',aud(est),'Proxy estimate, AUD'],
+    ['Similar past patients, 30-day mortality',sim.s.length<5?'n<5':p2(rs[0]),`n = ${sim.s.length}, descriptive only`]
+  ].map(k=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="p">${k[2]}</div></div>`).join('');
+  const end=Math.max(p.dayNow+9,14), A=[];
+  const at=(date,min,what)=>A.push([date,min,what]);
+  at(TODAY,480,'Spinal clinical meeting (this patient listed)');
+  at(addDays(TODAY,1),600,'Physiotherapy and occupational therapy, daily from this date');
+  if(p.comp.includes('Pneumonia')){ at(addDays(TODAY,1),540,'Repeat chest X-ray'); at(addDays(TODAY,2),690,'Respiratory medicine review'); }
+  if(p.surgery) at(addDays(p.admit,D.surgDay+10),600,'Wound review and clip removal');
+  at(addDays(TODAY,6),840,'Spinal rehabilitation assessment'); at(addDays(TODAY,11),540,'Planned transfer to rehabilitation (estimate)');
+  A.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  const tl=`<article class="card s12"><h3>Admission schedule <span class="sub">what has happened and what is booked</span></h3><div class="tl">${timelineSVG(p,'id',D,end)}</div>${tlLegend('id')}
+    <ul class="appts">${A.map(a=>`<li><time>${fD(a[0])}, ${fT(a[1])}</time><span>${a[2]} (Day ${Math.round((a[0]-p.admit)/864e5)})</span></li>`).join('')}</ul></article>`;
+  const reg=`<article class="card s12"><h3>What happened to similar past patients <span class="sub">from the spine registry</span></h3>
+    <div class="regwrap"><div id="regbars"></div><div><p style="margin:0 0 8px;font-size:15.5px;line-height:1.45">Similar means registry patients ${sim.def} (n = ${sim.s.length}). These are outcomes of <b>past</b> patients. They describe the registry and are <b>not a prediction</b> for ${esc(p.name.split(' ')[0])}.</p>
+    <p class="small">Solid charcoal bars show all SCI 60+ patients. Striped amber bars show the similar group. Percentages are shown to 2 decimal places.</p>
+    <button class="reset" id="toResearch">Open this group in research view</button></div></div></article>`;
+  $('cover').innerHTML=c.dxCard+c.chronic+c.micro+c.labs+c.meds+c.imgs+c.prior+tl+reg;
+  pairedBars($('regbars'),RATE_CATS,ra,sim.s.length<5?rs.map(()=>null):rs,{a:'All SCI 60+',b:'Similar past patients',label:'Similar past patients compared with all SCI 60+'});
+  $('toResearch').onclick=()=>{ setView('res'); presetSimilar(p); };
+}
+
+/* ================= research view ================= */
+const F={age:new Set(),lv:new Set(),ais:new Set(),cm:new Set(),comp:new Set(),surg:'All',out:'All',from:2016,to:2025};
+function buildFilters(){
+  const grp=(key,title,items)=>`<fieldset><legend>${title}</legend>${items.map(([v,l])=>`<label><input type="checkbox" data-k="${key}" value="${v}">${l}</label>`).join('')}</fieldset>`;
+  $('fbox').innerHTML=grp('age','Age at injury',BANDS.map(b=>[b,b]))+grp('lv','Injury level',LEVELS.map(l=>[l,l]))+grp('ais','AIS grade',['A','B','C','D'].map(a=>[a,'AIS '+a]))
+    +grp('cm','Has all of these conditions',COMORB.map(([k,l])=>[k,l]))+grp('comp','Had any of these complications',COMPL.map(c=>[c,c]))
+    +`<fieldset><legend>Surgery</legend><select data-k="surg"><option>All</option><option>Operated</option><option>Non-operative</option></select></fieldset>
+      <fieldset><legend>30-day outcome</legend><select data-k="out"><option>All</option><option>Alive at 30 days</option><option>Died within 30 days</option></select></fieldset>
+      <fieldset><legend>Year of injury</legend><div class="row"><select data-k="from">${[...Array(10)].map((_,i)=>`<option ${i===0?'selected':''}>${2016+i}</option>`).join('')}</select> to <select data-k="to">${[...Array(10)].map((_,i)=>`<option ${i===9?'selected':''}>${2016+i}</option>`).join('')}</select></div></fieldset>`;
+  $('fbox').querySelectorAll('input').forEach(i=>i.addEventListener('change',()=>{ const s=F[i.dataset.k]; i.checked?s.add(i.value):s.delete(i.value); renderResearch(); }));
+  $('fbox').querySelectorAll('select').forEach(s=>s.addEventListener('change',()=>{ const k=s.dataset.k; F[k]=(k==='from'||k==='to')?+s.value:s.value; renderResearch(); }));
+}
+const filtered=()=>COHORT.filter(q=>(!F.age.size||F.age.has(ageBand(q.age)))&&(!F.lv.size||F.lv.has(q.lv))&&(!F.ais.size||F.ais.has(q.ais))&&[...F.cm].every(k=>q.cm[k])&&(!F.comp.size||q.comp.some(c=>F.comp.has(c)))
+  &&(F.surg==='All'||(F.surg==='Operated')===q.surgery)&&(F.out==='All'||(F.out==='Died within 30 days')===q.died30)&&q.year>=F.from&&q.year<=F.to);
+const median=a=>{ if(!a.length) return 0; const s=[...a].sort((x,y)=>x-y), m=s.length>>1; return s.length%2?s[m]:(s[m-1]+s[m])/2; };
+function renderResearch(){
+  const L=filtered(), n=L.length, small=n<5;
+  const f=list=>[list.length,pct(list.filter(q=>q.died30).length,list.length),pct(list.filter(q=>q.died1y).length,list.filter(q=>q.died1y!==null).length),median(list.map(q=>q.los)),list.reduce((a,q)=>a+q.cost,0)/(list.length||1)];
+  const a=f(COHORT), b=f(L);
+  $('rkpis').innerHTML=[['Patients matching',b[0],a[0],v=>v],['30-day mortality',b[1],a[1],p2],['1-year mortality',b[2],a[2],p2],['Median length of stay',b[3],a[3],v=>Math.round(v)+' days'],['Mean estimated cost (AUD)',b[4],a[4],aud]]
+    .map((k,i)=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v" style="${i===4?'font-size:28px':''}">${i===0?k[1]:small?'n<5':k[3](k[1])}</div><div class="p">All SCI 60+: ${k[3](k[2])}</div></div>`).join('');
+  if(small) $('rbars').innerHTML='<p class="suppress">Fewer than 5 patients match these filters. Summary percentages are hidden to reduce the risk of identifying someone. Individual de-identified records are still listed.</p>';
+  else pairedBars($('rbars'),RATE_CATS,rates(COHORT),rates(L),{a:'All SCI 60+',b:'Filtered patients',label:'Filtered patients compared with all SCI 60+'});
+  $('rcount').textContent=`${n} patient${n===1?'':'s'}, select one to open the record`;
+  $('rtable').innerHTML=L.sort((x,y)=>y.year-x.year||x.sid.localeCompare(y.sid)).map(q=>`<tr tabindex="0" data-sid="${q.sid}"><td>${q.sid}</td><td>${ageBand(q.age)}</td><td>${q.lv}, ${q.ais}</td>
+    <td>${COMORB.filter(([k])=>q.cm[k]).map(([,,s])=>`<span class="mini">${s}</span>`).join('')||'None'}</td><td>${q.comp.map(c=>`<span class="mini">▲ ${c==='Pressure injury'?'PI':c}</span>`).join('')}</td><td>${q.los} days</td><td>${q.died30?'<b>Died</b>':'Alive'}</td></tr>`).join('');
+  $('rtable').querySelectorAll('tr').forEach(tr=>{ const open=()=>openRecord(tr.dataset.sid,tr); tr.addEventListener('click',open); tr.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();open();} }); });
+}
+function presetSimilar(p){
+  Object.assign(F,{age:new Set(simBands(p.age)),lv:new Set([p.lv]),ais:new Set(aisGroup(p.ais)==='A–B'?['A','B']:['C','D']),cm:new Set(),comp:new Set(),surg:'All',out:'All',from:2016,to:2025});
+  $('fbox').querySelectorAll('input').forEach(i=>i.checked=F[i.dataset.k].has(i.value)); $('fbox').querySelectorAll('select').forEach(s=>s.value=String(F[s.dataset.k]));
+  renderResearch(); say(`Filters set to patients similar to ${p.name.split(' ')[0]}. The research view shows them de-identified.`);
+}
+let lastFocus=null;
+function openRecord(sid,from){
+  const q=COHORT.find(x=>x.sid===sid), D=detail(q), c=cardsHTML(q,'deid',D);
+  $('dbody').innerHTML=`<h2 id="dtitle">${q.sid}</h2><div class="meta"><span><b>Age band</b>${ageBand(q.age)}</span><span><b>Sex</b>${q.sex}</span><span><b>Height</b>${q.h} cm</span><span><b>Weight</b>${q.w} kg (Day 0)</span><span><b>Year of injury</b>${q.year}</span></div>
+    <div class="chips"><span class="chip log">De-identified record. Day 0 = day of admission.</span></div>
+    <div class="kpis" style="grid-template-columns:repeat(3,1fr)">${[['Length of stay',q.los+' days'],['ICU days',q.icu],['Estimated cost',aud(q.cost)],['30-day status',q.died30?'Died':'Alive'],['1-year status',q.died1y===null?'Not yet due':q.died1y?'Died':'Alive'],['Complications',q.comp.length]].map(k=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v" style="font-size:26px">${k[1]}</div></div>`).join('')}</div>
+    <div class="cover">${c.dxCard}${c.chronic}<article class="card s12"><h3>Hospital course</h3><div class="tl">${timelineSVG(q,'deid',D,Math.max(14,Math.min(q.los,40)),760)}</div>${tlLegend('deid')}</article>${c.labs}${c.micro}${c.meds}${c.imgs}${c.prior}</div>`;
+  lastFocus=from; $('drawer').classList.add('open'); $('scrim').classList.add('open'); $('dx').focus();
+}
+function closeRecord(){ $('drawer').classList.remove('open'); $('scrim').classList.remove('open'); if(lastFocus) lastFocus.focus(); }
+$('dx').onclick=closeRecord; $('scrim').onclick=closeRecord; document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&$('drawer').classList.contains('open')) closeRecord(); });
+
+/* ================= wiring ================= */
+function setView(v){ const s=v==='surg'; $('surgeon').hidden=!s; $('research').hidden=s; $('pickerWrap').hidden=!s; $('v-surg').setAttribute('aria-pressed',s); $('v-res').setAttribute('aria-pressed',!s); }
+$('v-surg').onclick=()=>setView('surg'); $('v-res').onclick=()=>setView('res');
+$('picker').innerHTML=INPATIENTS.map((p,i)=>`<option value="${i}">${p.name}, ${p.bed.replace('Spinal ward, ','')}</option>`).join('');
+$('picker').onchange=e=>renderSurgeon(INPATIENTS[+e.target.value]);
+$('reset').onclick=()=>{ Object.assign(F,{age:new Set(),lv:new Set(),ais:new Set(),cm:new Set(),comp:new Set(),surg:'All',out:'All',from:2016,to:2025}); buildFilters(); renderResearch(); };
+$('export').onclick=()=>say('Placeholder: the build will download a de-identified CSV of the filtered patients.');
+$('warn-x').onclick=()=>$('warn').hidden=true;
+document.addEventListener('click',e=>{
+  if(e.target.matches('[data-pacs]')) say('Placeholder: opens the study in the hospital PACS viewer.');
+  if(e.target.matches('[data-cmp]')) say('Placeholder: opens side-by-side comparison with the current study.');
+  const hb=e.target.closest('.hbtn'); if(hb){ const row=document.getElementById('h-'+hb.dataset.h), open=hb.getAttribute('aria-expanded')!=='true'; row.hidden=!open; hb.setAttribute('aria-expanded',open); hb.textContent=(open?'Hide history':'Show history')+hb.textContent.replace(/^(Show|Hide) history/,''); }
+});
+buildFilters(); renderSurgeon(HERO); renderResearch();
+</script>

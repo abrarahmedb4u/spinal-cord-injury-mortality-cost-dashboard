@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "SCI_Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "d46ce5b1-8c07-4455-9dc5-ad2b50b8ed19"
+  }
+}

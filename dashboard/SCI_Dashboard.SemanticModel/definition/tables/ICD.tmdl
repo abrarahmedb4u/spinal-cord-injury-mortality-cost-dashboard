@@ -1,0 +1,87 @@
+table ICD
+	lineageTag: b626e11d-6ea2-4fd4-a4e7-89636388db09
+
+	column patient_id
+		dataType: string
+		lineageTag: 53c838aa-d895-4dea-85a1-e4c68bfb6a82
+		summarizeBy: none
+		sourceColumn: patient_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column redcap_repeat_instance
+		dataType: string
+		lineageTag: 52c92858-59db-4169-aaab-83856d615a47
+		summarizeBy: none
+		sourceColumn: redcap_repeat_instance
+
+		annotation SummarizationSetBy = Automatic
+
+	column icd_sequence
+		dataType: int64
+		formatString: 0
+		lineageTag: a1c60367-049e-40e4-8f4e-c5f501deeedb
+		summarizeBy: sum
+		sourceColumn: icd_sequence
+
+		annotation SummarizationSetBy = Automatic
+
+	column icd_code
+		dataType: string
+		lineageTag: 5fc2aef2-6b0e-4b36-ae67-e8747bf4918a
+		summarizeBy: none
+		sourceColumn: icd_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column icd_description
+		dataType: string
+		lineageTag: cd0c2616-303b-4544-ba32-34e9e979d806
+		summarizeBy: none
+		sourceColumn: icd_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdmissionKey
+		dataType: string
+		lineageTag: c511d56c-cf47-4812-af74-a8259b391f81
+		summarizeBy: none
+		sourceColumn: AdmissionKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Condition group' =
+			VAR c = ICD[icd_code]
+			RETURN
+			    SWITCH (
+			        TRUE (),
+			        c IN { "R33", "R32", "N319" }, "Urinary",
+			        c IN { "G834", "G959", "G819", "G629", "R202", "M2137", "R268", "R15" }, "Neurological",
+			        c IN { "J189", "J981", "J9690", "J9691", "J9699" }, "Respiratory",
+			        c = "I269", "Pulmonary embolism",
+			        c IN { "A419", "T846", "T814", "L022", "L023", "L0242" } || LEFT ( c, 3 ) = "M86", "Infection",
+			        c IN { "T810", "T842", "M960", "Z981", "Z988" }, "Surgical or implant complication",
+			        "Other (pain, anxiety)"
+			    )
+		lineageTag: b22f979c-7a8f-4fde-b34a-2d8b484e2067
+		summarizeBy: none
+
+	partition ICD = m
+		mode: import
+		source =
+				let
+				    Source = REDCap_Raw,
+				    Rows = Table.SelectRows(Source, each [redcap_repeat_instrument] = "icd_codes"),
+				    Keep = Table.SelectColumns(Rows, {"patient_id", "redcap_repeat_instance", "icd_sequence", "icd_code", "icd_description"}),
+				    Trim = Table.TransformColumns(Keep, {{"icd_sequence", Text.Trim, type text}}),
+				    Typed = Table.TransformColumnTypes(Trim, {{"icd_sequence", Int64.Type}}),
+				    SingleAdm = Table.SelectColumns(Table.SelectRows(Admissions, each [#"Single-admission patient"] = true), {"patient_id", "AdmissionKey"}),
+				    Joined = Table.NestedJoin(Typed, {"patient_id"}, SingleAdm, {"patient_id"}, "A", JoinKind.LeftOuter),
+				    Final = Table.ExpandTableColumn(Joined, "A", {"AdmissionKey"})
+				in
+				    Final
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

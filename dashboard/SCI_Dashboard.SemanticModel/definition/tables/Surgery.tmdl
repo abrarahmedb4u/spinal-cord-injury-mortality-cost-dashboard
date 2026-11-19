@@ -1,0 +1,149 @@
+table Surgery
+	lineageTag: 2a5271e2-dcf3-41e0-874b-8aa5c93ab83f
+
+	column patient_id
+		dataType: string
+		lineageTag: bf706291-904d-496e-a7b0-8ec71d3b88bd
+		summarizeBy: none
+		sourceColumn: patient_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column redcap_repeat_instance
+		dataType: int64
+		formatString: 0
+		lineageTag: 24d5620e-a95e-4295-9fa2-10f274454d8f
+		summarizeBy: sum
+		sourceColumn: redcap_repeat_instance
+
+		annotation SummarizationSetBy = Automatic
+
+	column surg_date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: af8de0fc-1861-42c1-9ded-4ce0d8797f5a
+		summarizeBy: none
+		sourceColumn: surg_date
+
+		variation Variation
+			isDefault
+			relationship: 526955e4-76c7-4925-ab65-9d88092267aa
+			defaultHierarchy: LocalDateTable_0f11aead-cb22-4ff3-9227-5556226f58f6.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column surg_achi
+		dataType: string
+		lineageTag: 0b8adacc-e52a-497b-8fdf-82e7233a7e8b
+		summarizeBy: none
+		sourceColumn: surg_achi
+
+		annotation SummarizationSetBy = Automatic
+
+	column surg_op_description
+		dataType: string
+		lineageTag: a7ea515a-408a-4344-83bc-06b30ebb18fd
+		summarizeBy: none
+		sourceColumn: surg_op_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Surgery status'
+		dataType: string
+		lineageTag: e5acfce3-d72c-4d21-8f42-b91638be0487
+		summarizeBy: none
+		sourceColumn: Surgery status
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Surgery site'
+		dataType: string
+		lineageTag: f1b9ab6e-af48-47cc-8c9a-d3a2beb68abc
+		summarizeBy: none
+		sourceColumn: Surgery site
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdmissionKey
+		dataType: string
+		lineageTag: e5814694-c311-41e8-ae31-eaedbe7a3935
+		summarizeBy: none
+		sourceColumn: AdmissionKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'MBS item'
+		dataType: string
+		lineageTag: af4d07b9-1f52-4370-9dfc-60b1376c4779
+		summarizeBy: none
+		sourceColumn: MBS item
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Surgery fee'
+		dataType: double
+		lineageTag: 99067d19-913a-4f2a-99d2-b07c7cfd8964
+		summarizeBy: sum
+		sourceColumn: Surgery fee
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Fee match'
+		dataType: string
+		lineageTag: 52eaaa60-73a6-47c0-b2fd-cd3a3359e2db
+		summarizeBy: none
+		sourceColumn: Fee match
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Surgery fee (same-day discount)' =
+			VAR pid = Surgery[patient_id]
+			VAR d = Surgery[surg_date]
+			VAR st = Surgery[Surgery status]
+			VAR f = Surgery[Surgery fee]
+			VAR inst = Surgery[redcap_repeat_instance]
+			VAR rnk =
+			    COUNTROWS (
+			        FILTER (
+			            Surgery,
+			            Surgery[patient_id] = pid
+			                && Surgery[surg_date] = d
+			                && Surgery[Surgery status] = st
+			                && ( Surgery[Surgery fee] > f
+			                    || ( Surgery[Surgery fee] = f && Surgery[redcap_repeat_instance] < inst ) )
+			        )
+			    ) + 1
+			RETURN
+			    f * SWITCH ( TRUE (), rnk = 1, 1, rnk = 2, 0.5, 0.25 )
+		formatString: \$#,0.00
+		lineageTag: 77625d85-9d81-430f-a089-4592a4247b94
+		summarizeBy: sum
+
+	partition Surgery = m
+		mode: import
+		source =
+				let
+				    Source = REDCap_Raw,
+				    Rows = Table.SelectRows(Source, each [redcap_repeat_instrument] = "surgery"),
+				    Keep = Table.SelectColumns(Rows, {"patient_id", "redcap_repeat_instance", "surg_status", "surg_date", "surg_problem", "surg_achi", "surg_op_description"}),
+				    Typed = Table.TransformColumnTypes(Keep, {{"redcap_repeat_instance", Int64.Type}, {"surg_date", type date}}),
+				    Status = Table.AddColumn(Typed, "Surgery status", each if [surg_status] = "2" then "Actual" else if [surg_status] = "1" then "Planned" else "Unknown", type text),
+				    Site = Table.AddColumn(Status, "Surgery site", each if [surg_problem] = "1" then "Lumbar" else if [surg_problem] = "2" then "Cervical" else "Not recorded", type text),
+				    FeeMerge = Table.NestedJoin(Site, {"surg_achi"}, ACHI_MBS_Map, {"surg_achi"}, "M", JoinKind.LeftOuter),
+				    FeeExpand = Table.ExpandTableColumn(FeeMerge, "M", {"MBS item", "MBS fee", "Match"}, {"MBS item", "Surgery fee", "Fee match"}),
+				    SingleAdm = Table.SelectColumns(Table.SelectRows(Admissions, each [#"Single-admission patient"] = true), {"patient_id", "AdmissionKey"}),
+				    Joined = Table.NestedJoin(FeeExpand, {"patient_id"}, SingleAdm, {"patient_id"}, "A", JoinKind.LeftOuter),
+				    Expanded = Table.ExpandTableColumn(Joined, "A", {"AdmissionKey"}),
+				    Final = Table.RemoveColumns(Expanded, {"surg_status", "surg_problem"}),
+				    Typed2 = Table.TransformColumnTypes(Final, {{"Surgery fee", type number}})
+				in
+				    Typed2
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

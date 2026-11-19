@@ -1,0 +1,17 @@
+table 'Compare Right Year'
+	lineageTag: da9f1b23-514c-51fa-8c7e-b46367121c1e
+
+	column 'Admission year'
+		dataType: int64
+		formatString: 0
+		lineageTag: 4c7510c6-9143-578c-b244-6cc31d219de3
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Admission year]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Right Year' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( DISTINCT ( Admissions[Admission year] ), "Admission year", Admissions[Admission year] )
+

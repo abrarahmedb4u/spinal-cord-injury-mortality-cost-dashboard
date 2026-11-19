@@ -1,0 +1,214 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "19480b6f9ab5ab1797f1",
+  "position": {
+    "x": 20,
+    "y": 378,
+    "z": 14000,
+    "height": 340,
+    "width": 1150,
+    "tabOrder": 14000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Age band"
+                }
+              },
+              "queryRef": "Admissions.Age band",
+              "nativeQueryRef": "Age band"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "HFRS band"
+                }
+              },
+              "queryRef": "Admissions.HFRS band",
+              "nativeQueryRef": "HFRS band",
+              "displayName": "Frailty (HFRS) band"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Admissions (n)"
+                }
+              },
+              "queryRef": "Admissions.Admissions (n)",
+              "nativeQueryRef": "Admissions (n)",
+              "displayName": "Admissions"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Deaths (n)"
+                }
+              },
+              "queryRef": "Admissions.Deaths (n)",
+              "nativeQueryRef": "Deaths (n)",
+              "displayName": "Deaths"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "In-hospital mortality %"
+                }
+              },
+              "queryRef": "Admissions.In-hospital mortality %",
+              "nativeQueryRef": "In-hospital mortality %",
+              "displayName": "Mortality"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Mortality CI lower %"
+                }
+              },
+              "queryRef": "Admissions.Mortality CI lower %",
+              "nativeQueryRef": "Mortality CI lower %",
+              "displayName": "95% CI low"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Mortality CI upper %"
+                }
+              },
+              "queryRef": "Admissions.Mortality CI upper %",
+              "nativeQueryRef": "Mortality CI upper %",
+              "displayName": "95% CI high"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Median length of stay (days)"
+                }
+              },
+              "queryRef": "Admissions.Median length of stay (days)",
+              "nativeQueryRef": "Median length of stay (days)",
+              "displayName": "Median stay (days)"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "% with ICU stay"
+                }
+              },
+              "queryRef": "Admissions.% with ICU stay",
+              "nativeQueryRef": "% with ICU stay",
+              "displayName": "Had ICU stay"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Patients like yours — find the row for your patient''s age band and frailty band'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'One row per group. Read the 95% CI: a wide interval means too few patients for a reliable number.'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

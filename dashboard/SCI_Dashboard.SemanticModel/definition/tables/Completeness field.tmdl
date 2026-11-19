@@ -1,0 +1,41 @@
+table 'Completeness field'
+	lineageTag: 559e9a6d-6609-4241-aa3b-962f540a83d8
+
+	column Field
+		dataType: string
+		lineageTag: f6cb7ea4-faad-45a8-a595-e81f3a3f6e26
+		summarizeBy: none
+		sourceColumn: Field
+		sortByColumn: 'Sort order'
+
+	column 'Sort order'
+		dataType: int64
+		formatString: 0
+		lineageTag: c40db35a-623e-44f7-8cc7-74eb99ef8bd8
+		summarizeBy: none
+		sourceColumn: Sort order
+
+	partition 'Completeness field' = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [#"Field" = text, #"Sort order" = Int64.Type],
+				        {
+				            {"Frailty (HFRS)", 1},
+				            {"DRG*", 2},
+				            {"Funding (public/private)", 3},
+				            {"ICU hours", 4},
+				            {"Ventilation hours", 5},
+				            {"Admitted to ED", 6},
+				            {"Charlson (CCI)", 7},
+				            {"ICD-10 code*", 8},
+				            {"ASIA grade", 9},
+				            {"Spinal Trauma Score", 10}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_ResultType = Table
+

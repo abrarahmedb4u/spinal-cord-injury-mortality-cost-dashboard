@@ -1,0 +1,16 @@
+table 'Compare Left Funding'
+	lineageTag: d53580db-4486-5e64-8d34-eff59182fff8
+
+	column Funding
+		dataType: string
+		lineageTag: c26eaa89-4361-5cc0-a8a8-ab5519e090e6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Funding]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Left Funding' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( DISTINCT ( Patients[Funding] ), "Funding", Patients[Funding] )
+

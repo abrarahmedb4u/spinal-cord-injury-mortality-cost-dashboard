@@ -1,0 +1,16 @@
+table 'Compare Right Had surgery'
+	lineageTag: f8fb9401-4bdb-5a7d-b1f1-440efcaba119
+
+	column 'Had surgery'
+		dataType: string
+		lineageTag: 0b1e9219-abd9-58ba-951d-b51849af27c9
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Had surgery]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Right Had surgery' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( DISTINCT ( Admissions[Had surgery] ), "Had surgery", Admissions[Had surgery] )
+

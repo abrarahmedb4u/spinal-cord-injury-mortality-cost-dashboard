@@ -1,0 +1,162 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "754cc5696b098899f044",
+  "position": {
+    "x": 970,
+    "y": 712,
+    "z": 17000,
+    "height": 210,
+    "width": 930,
+    "tabOrder": 17000
+  },
+  "visual": {
+    "visualType": "tableEx",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "HFRS band"
+                }
+              },
+              "queryRef": "Admissions.HFRS band",
+              "nativeQueryRef": "HFRS band"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Admissions (n)"
+                }
+              },
+              "queryRef": "Admissions.Admissions (n)",
+              "nativeQueryRef": "Admissions (n)",
+              "displayName": "Admissions"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Deaths (n)"
+                }
+              },
+              "queryRef": "Admissions.Deaths (n)",
+              "nativeQueryRef": "Deaths (n)",
+              "displayName": "Deaths"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "In-hospital mortality %"
+                }
+              },
+              "queryRef": "Admissions.In-hospital mortality %",
+              "nativeQueryRef": "In-hospital mortality %",
+              "displayName": "Mortality"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Mortality CI lower %"
+                }
+              },
+              "queryRef": "Admissions.Mortality CI lower %",
+              "nativeQueryRef": "Mortality CI lower %",
+              "displayName": "95% CI low"
+            },
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Admissions"
+                    }
+                  },
+                  "Property": "Mortality CI upper %"
+                }
+              },
+              "queryRef": "Admissions.Mortality CI upper %",
+              "nativeQueryRef": "Mortality CI upper %",
+              "displayName": "95% CI high"
+            }
+          ]
+        }
+      }
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Mortality by frailty band (Hospital Frailty Risk Score)'"
+                }
+              }
+            },
+            "fontSize": {
+              "expr": {
+                "Literal": {
+                  "Value": "14D"
+                }
+              }
+            },
+            "bold": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          }
+        }
+      ],
+      "subTitle": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

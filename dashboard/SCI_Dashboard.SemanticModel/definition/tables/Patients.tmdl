@@ -1,0 +1,70 @@
+table Patients
+	lineageTag: 243e8c2e-d82d-44b8-a7c8-6670e5721fb2
+
+	column patient_id
+		dataType: string
+		lineageTag: 929cf2ec-d664-47a2-81de-a4ee80cb34a1
+		summarizeBy: none
+		sourceColumn: patient_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_deceased
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: b7ac6219-27fa-48dd-a667-7e42af43c536
+		summarizeBy: none
+		sourceColumn: date_deceased
+
+		variation Variation
+			isDefault
+			relationship: 29224501-f1c2-41e7-9e2a-5e8a56dd1364
+			defaultHierarchy: LocalDateTable_0ed3ab26-a183-4f3a-bfff-2023ca086c3e.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Gender
+		dataType: string
+		lineageTag: f9a3ee2e-ce65-4ba7-82e2-13ba147bd579
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Aboriginal or TSI'
+		dataType: string
+		lineageTag: 704d67bc-7880-4efb-b2b9-65d1b555380e
+		summarizeBy: none
+		sourceColumn: Aboriginal or TSI
+
+		annotation SummarizationSetBy = Automatic
+
+	column Funding
+		dataType: string
+		lineageTag: 03480eaf-e02d-45cd-a8d1-90b443dd7061
+		summarizeBy: none
+		sourceColumn: Funding
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Patients = m
+		mode: import
+		source =
+				let
+				    Source = REDCap_Raw,
+				    Rows = Table.SelectRows(Source, each [redcap_repeat_instrument] = null),
+				    Keep = Table.SelectColumns(Rows, {"patient_id", "gender", "race_code", "public_private", "date_deceased"}),
+				    Gender = Table.AddColumn(Keep, "Gender", each if [gender] = "1" then "Male" else if [gender] = "2" then "Female" else if [gender] = "3" then "Indeterminate" else "Unknown", type text),
+				    ATSI = Table.AddColumn(Gender, "Aboriginal or TSI", each if [race_code] = "0" then "Neither" else if List.Contains({"1", "2", "3"}, [race_code]) then "Aboriginal and/or TSI" else "Not stated", type text),
+				    Funding = Table.AddColumn(ATSI, "Funding", each if [public_private] = "1" then "Public" else if [public_private] = "2" then "Private" else if [public_private] = "3" then "PRNI" else "Not recorded", type text),
+				    Typed = Table.TransformColumnTypes(Funding, {{"date_deceased", type date}}),
+				    Final = Table.RemoveColumns(Typed, {"gender", "race_code", "public_private"})
+				in
+				    Final
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

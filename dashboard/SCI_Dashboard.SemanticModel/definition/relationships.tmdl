@@ -1,0 +1,40 @@
+relationship 29224501-f1c2-41e7-9e2a-5e8a56dd1364
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Patients.date_deceased
+	toColumn: LocalDateTable_0ed3ab26-a183-4f3a-bfff-2023ca086c3e.Date
+
+relationship dc693475-3125-49ae-953b-d8062ab7b007
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Admissions.adm_doa
+	toColumn: LocalDateTable_ff7a8dac-c666-45af-a7c5-1891d6e82f44.Date
+
+relationship 4e8110ba-970b-458e-b6d6-68ec9ebd97e5
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Admissions.adm_dos
+	toColumn: LocalDateTable_ebba0010-45c8-4358-b212-bcc48a19d7c4.Date
+
+relationship 526955e4-76c7-4925-ab65-9d88092267aa
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Surgery.surg_date
+	toColumn: LocalDateTable_0f11aead-cb22-4ff3-9227-5556226f58f6.Date
+
+relationship AutoDetected_dab23907-6b07-486c-a9ed-b172bdb96bd6
+	fromColumn: Admissions.patient_id
+	toColumn: Patients.patient_id
+
+relationship AutoDetected_c364d1a1-1169-490e-a380-2dec3ac51b25
+	fromColumn: Surgery.AdmissionKey
+	toColumn: Admissions.AdmissionKey
+
+relationship AutoDetected_a2449bc7-25b1-4289-8d28-5826d2363a3f
+	fromColumn: DRG.AdmissionKey
+	toColumn: Admissions.AdmissionKey
+
+relationship AutoDetected_5be8ad46-8f50-434b-9e42-9e17ab1a4a85
+	fromColumn: ICD.AdmissionKey
+	toColumn: Admissions.AdmissionKey
+
+relationship AutoDetected_21a7cf56-ecc6-4004-bd39-2e5cad904b7b
+	fromColumn: Surgery.surg_achi
+	toColumn: ACHI_MBS_Map.surg_achi
+

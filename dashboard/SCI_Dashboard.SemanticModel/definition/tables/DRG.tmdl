@@ -1,0 +1,60 @@
+table DRG
+	lineageTag: 55e94164-a81b-408e-ba8c-6071bc946ac9
+
+	column patient_id
+		dataType: string
+		lineageTag: 40beeae9-e01f-415c-9ce5-4290a88e89a2
+		summarizeBy: none
+		sourceColumn: patient_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column redcap_repeat_instance
+		dataType: string
+		lineageTag: b4041f29-a381-4080-a339-4ac9fe68bbe6
+		summarizeBy: none
+		sourceColumn: redcap_repeat_instance
+
+		annotation SummarizationSetBy = Automatic
+
+	column drg
+		dataType: string
+		lineageTag: 3a976724-a6be-4a38-845f-0e70bef4d6a7
+		summarizeBy: none
+		sourceColumn: drg
+
+		annotation SummarizationSetBy = Automatic
+
+	column drg_description
+		dataType: string
+		lineageTag: 83439dcd-771a-4864-8436-49b6f989acc9
+		summarizeBy: none
+		sourceColumn: drg_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column AdmissionKey
+		dataType: string
+		lineageTag: 27d06779-7759-43f1-8214-befed064ae12
+		summarizeBy: none
+		sourceColumn: AdmissionKey
+
+		annotation SummarizationSetBy = Automatic
+
+	partition DRG = m
+		mode: import
+		source =
+				let
+				    Source = REDCap_Raw,
+				    Rows = Table.SelectRows(Source, each [redcap_repeat_instrument] = "drg"),
+				    Keep = Table.SelectColumns(Rows, {"patient_id", "redcap_repeat_instance", "drg", "drg_description"}),
+				    SingleAdm = Table.SelectColumns(Table.SelectRows(Admissions, each [#"Single-admission patient"] = true), {"patient_id", "AdmissionKey"}),
+				    Joined = Table.NestedJoin(Keep, {"patient_id"}, SingleAdm, {"patient_id"}, "A", JoinKind.LeftOuter),
+				    Final = Table.ExpandTableColumn(Joined, "A", {"AdmissionKey"})
+				in
+				    Final
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

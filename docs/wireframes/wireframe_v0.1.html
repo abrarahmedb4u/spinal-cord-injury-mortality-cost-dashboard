@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SCI Dashboard — Research Deep-Dive Wireframe</title>
+<style>
+  :root{
+    --ink:#22282f;
+    --paper:#eef0f2;
+    --line:#9aa4ad;
+    --line-soft:#c7ced4;
+    --box:#ffffff;
+    --accent:#2f5d8a;
+    --accent-soft:#dbe6ef;
+    --warn:#8a5a2f;
+    --warn-soft:#f2e6d8;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Helvetica, Arial, sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .meta-bar{
+    background:#ffffff;
+    border-bottom:1px solid var(--line-soft);
+    padding:10px 24px;
+    font-size:12.5px;
+    color:#5a6570;
+  }
+  .stage{
+    padding:24px;
+    max-width:1220px;
+    margin:0 auto;
+  }
+
+  .wire-label{
+    font-size:11px;
+    letter-spacing:.02em;
+    color:#6b7580;
+    margin-bottom:6px;
+  }
+  .caveat{
+    border:1px dashed var(--warn);
+    background:var(--warn-soft);
+    color:var(--warn);
+    font-size:12.5px;
+    padding:8px 10px;
+    border-radius:2px;
+    margin-top:8px;
+  }
+
+  .panel{
+    background:var(--box);
+    border:1px solid var(--line-soft);
+    border-radius:3px;
+  }
+  .panel h4{
+    margin:0;
+    padding:10px 14px;
+    font-size:13px;
+    border-bottom:1px solid var(--line-soft);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:600;
+  }
+  .chart-body{ padding:14px; }
+  .placeholder-note{ font-size:11px; color:#8b95a0; margin-top:6px;}
+
+  .kpi-row{ display:grid; gap:12px; margin-bottom:16px; }
+  .kpi{
+    background:var(--box);
+    border:1px solid var(--line-soft);
+    border-left:4px solid var(--accent);
+    border-radius:3px;
+    padding:12px 14px;
+  }
+  .kpi .num{ font-size:24px; font-weight:700; }
+  .kpi .label{ font-size:11.5px; color:#5a6570; margin-top:2px; }
+
+  svg text{ font-family:'Segoe UI', Helvetica, Arial, sans-serif; }
+  .axis{ stroke:var(--line-soft); stroke-width:1; }
+  .bar{ fill:var(--accent); }
+  .bar.alt{ fill:#7fa0bd; }
+  .line-path{ fill:none; stroke:var(--accent); stroke-width:2; }
+  .dot{ fill:var(--accent); }
+  .tick{ fill:#5a6570; font-size:9px; }
+  .axis-title{ fill:#3d444b; font-size:10px; font-weight:600; }
+  .axis-title.y{ text-anchor:middle; }
+  .axis-title.x{ text-anchor:middle; }
+
+  .layoutC{ display:grid; grid-template-columns:220px 1fr; gap:16px; }
+  .sidebarC{ background:var(--box); border:1px solid var(--line-soft); border-radius:3px; padding:14px; align-self:start; }
+  .sidebarC h5{ margin:14px 0 8px; font-size:11px; color:#5a6570; text-transform:none; }
+  .sidebarC h5:first-child{ margin-top:0; }
+  .chip{ display:inline-block; font-size:11px; border:1px solid var(--line-soft); border-radius:12px; padding:3px 9px; margin:2px 4px 2px 0; color:#3d444b;}
+  .gridC{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .kpi-row.c{ grid-template-columns:repeat(4,1fr); }
+  .wide{ grid-column:span 3; }
+  .two{ grid-column:span 2; }
+
+  .footer-note{
+    max-width:1220px;
+    margin:0 auto 40px;
+    padding:0 24px;
+    font-size:12px;
+    color:#6b7580;
+  }
+</style>
+</head>
+<body>
+
+<div class="meta-bar">Low-fidelity wireframe — layout &amp; content structure only. Chart data shown is illustrative, not real figures.</div>
+
+<div class="stage">
+
+  <div class="layoutC">
+    <div class="sidebarC">
+      <h5>COHORT FILTERS</h5>
+      <span class="chip">Age 60+</span><span class="chip">Gender</span><span class="chip">Public/Private</span>
+      <h5>CLINICAL FILTERS</h5>
+      <span class="chip">Frailty band</span><span class="chip">Charlson band*</span><span class="chip">Problem: lumbar/cervical</span>
+      <h5>EQUITY (aggregated only)</h5>
+      <span class="chip">Aboriginal/TSI — grouped</span>
+      <div class="placeholder-note" style="margin-top:6px;">Shown as an aggregate filter only, not a standalone breakdown — small cell counts + ICIP data sovereignty considerations.</div>
+      <h5>DATA NOTES</h5>
+      <div class="caveat">*Charlson populated in ~1 in 3 admissions — charts using it are marked "partial data."</div>
+    </div>
+
+    <div>
+      <div class="kpi-row c">
+        <div class="kpi"><div class="num">14.2%</div><div class="label">30-day mortality</div></div>
+        <div class="kpi"><div class="num">31.6%</div><div class="label">1-year mortality</div></div>
+        <div class="kpi"><div class="num">$11.7k</div><div class="label">Avg. cost proxy</div></div>
+        <div class="kpi"><div class="num">n = 412</div><div class="label">Cohort size</div></div>
+      </div>
+
+      <div class="gridC">
+        <div class="panel two">
+          <h4>5-year mortality trend <span class="placeholder-note">(line)</span></h4>
+          <div class="chart-body">
+            <svg viewBox="0 0 420 165" width="100%" height="153">
+              <line class="axis" x1="30" y1="115" x2="400" y2="115"/>
+              <line class="axis" x1="30" y1="10" x2="30" y2="115"/>
+              <polyline class="line-path" points="50,80 110,70 170,85 230,55 290,40 350,45"/>
+              <circle class="dot" cx="50" cy="80" r="3"/><circle class="dot" cx="110" cy="70" r="3"/>
+              <circle class="dot" cx="170" cy="85" r="3"/><circle class="dot" cx="230" cy="55" r="3"/>
+              <circle class="dot" cx="290" cy="40" r="3"/><circle class="dot" cx="350" cy="45" r="3"/>
+              <text class="tick" x="45" y="130">2021</text><text class="tick" x="105" y="130">2022</text>
+              <text class="tick" x="165" y="130">2023</text><text class="tick" x="225" y="130">2024</text>
+              <text class="tick" x="285" y="130">2025</text><text class="tick" x="340" y="130">2026</text>
+              <text class="axis-title x" x="215" y="155">Admission year</text>
+              <text class="axis-title y" x="0" y="0" transform="translate(12,75) rotate(-90)">Mortality rate (%)</text>
+            </svg>
+          </div>
+        </div>
+        <div class="panel">
+          <h4>Age-band mortality <span class="placeholder-note">(bar)</span></h4>
+          <div class="chart-body">
+            <svg viewBox="0 0 220 165" width="100%" height="153">
+              <line class="axis" x1="25" y1="115" x2="200" y2="115"/>
+              <line class="axis" x1="25" y1="10" x2="25" y2="115"/>
+              <rect class="bar" x="35" y="95" width="30" height="20"/>
+              <rect class="bar" x="80" y="75" width="30" height="40"/>
+              <rect class="bar" x="125" y="50" width="30" height="65"/>
+              <rect class="bar" x="170" y="30" width="30" height="0" opacity="0"/>
+              <text class="tick" x="35" y="130">60–69</text><text class="tick" x="80" y="130">70–79</text>
+              <text class="tick" x="125" y="130">80–89</text>
+              <text class="axis-title x" x="112" y="150">Age at admission (years)</text>
+              <text class="axis-title y" x="0" y="0" transform="translate(10,65) rotate(-90)">Mortality rate (%)</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h4>Mortality by frailty band <span class="placeholder-note">(bar)</span></h4>
+          <div class="chart-body">
+            <svg viewBox="0 0 220 165" width="100%" height="153">
+              <line class="axis" x1="25" y1="115" x2="200" y2="115"/>
+              <line class="axis" x1="25" y1="10" x2="25" y2="115"/>
+              <rect class="bar" x="40" y="95" width="35" height="20"/>
+              <rect class="bar" x="95" y="70" width="35" height="45"/>
+              <rect class="bar" x="150" y="35" width="35" height="80"/>
+              <text class="tick" x="45" y="130">Low</text><text class="tick" x="100" y="130">Medium</text>
+              <text class="tick" x="155" y="130">High</text>
+              <text class="axis-title x" x="112" y="150">Hospital Frailty Risk Score band</text>
+              <text class="axis-title y" x="0" y="0" transform="translate(10,65) rotate(-90)">Mortality rate (%)</text>
+            </svg>
+          </div>
+        </div>
+        <div class="panel">
+          <h4>Post-injury complications linked to mortality <span class="placeholder-note">(bar)</span></h4>
+          <div class="chart-body">
+            <svg viewBox="0 0 220 165" width="100%" height="153">
+              <line class="axis" x1="25" y1="115" x2="200" y2="115"/>
+              <line class="axis" x1="25" y1="10" x2="25" y2="115"/>
+              <rect class="bar" x="30" y="55" width="24" height="60"/>
+              <rect class="bar alt" x="65" y="75" width="24" height="40"/>
+              <rect class="bar alt" x="100" y="95" width="24" height="20"/>
+              <rect class="bar alt" x="135" y="100" width="24" height="15"/>
+              <rect class="bar alt" x="170" y="105" width="24" height="10"/>
+              <text class="tick" x="30" y="130">Sepsis</text><text class="tick" x="60" y="130">Pneum.</text>
+              <text class="tick" x="98" y="130">Other*</text><text class="tick" x="133" y="130">Other*</text>
+              <text class="tick" x="168" y="130">Other*</text>
+              <text class="axis-title x" x="112" y="150">Complication (ICD-10 coded)</text>
+              <text class="axis-title y" x="0" y="0" transform="translate(10,65) rotate(-90)">Deaths (n)</text>
+            </svg>
+          </div>
+        </div>
+        <div class="panel">
+          <h4>Comorbidity burden distribution <span class="placeholder-note">(bar, partial data*)</span></h4>
+          <div class="chart-body">
+            <svg viewBox="0 0 220 165" width="100%" height="153">
+              <line class="axis" x1="25" y1="115" x2="200" y2="115"/>
+              <line class="axis" x1="25" y1="10" x2="25" y2="115"/>
+              <rect class="bar" x="40" y="70" width="30" height="45"/>
+              <rect class="bar" x="85" y="45" width="30" height="70"/>
+              <rect class="bar" x="130" y="90" width="30" height="25"/>
+              <text class="tick" x="40" y="130">Low</text><text class="tick" x="85" y="130">Medium</text>
+              <text class="tick" x="130" y="130">High</text>
+              <text class="axis-title x" x="112" y="150">Charlson Comorbidity Index band*</text>
+              <text class="axis-title y" x="0" y="0" transform="translate(10,65) rotate(-90)">Admissions (n)</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="panel wide">
+          <h4>Cost of top 5 treatments <span class="placeholder-note">(bar, DRG proxy)</span></h4>
+          <div class="chart-body">
+            <svg viewBox="0 0 700 165" width="100%" height="153">
+              <line class="axis" x1="30" y1="115" x2="670" y2="115"/>
+              <line class="axis" x1="30" y1="10" x2="30" y2="115"/>
+              <rect class="bar" x="60" y="30" width="60" height="85"/>
+              <rect class="bar" x="180" y="50" width="60" height="65"/>
+              <rect class="bar" x="300" y="65" width="60" height="50"/>
+              <rect class="bar" x="420" y="80" width="60" height="35"/>
+              <rect class="bar" x="540" y="90" width="60" height="25"/>
+              <text class="tick" x="75" y="130">DRG-A</text><text class="tick" x="195" y="130">DRG-B</text>
+              <text class="tick" x="315" y="130">DRG-C</text><text class="tick" x="435" y="130">DRG-D</text>
+              <text class="tick" x="555" y="130">DRG-E</text>
+              <text class="axis-title x" x="350" y="150">DRG group (treatment)</text>
+              <text class="axis-title y" x="0" y="0" transform="translate(12,65) rotate(-90)">Cost proxy (DRG weight)</text>
+            </svg>
+          </div>
+        </div>
+
+        <div class="panel two">
+          <h4>Length of stay vs. cost proxy <span class="placeholder-note">(scatter)</span></h4>
+          <div class="chart-body">
+            <svg viewBox="0 0 420 155" width="100%" height="143">
+              <line class="axis" x1="30" y1="105" x2="400" y2="105"/>
+              <line class="axis" x1="30" y1="10" x2="30" y2="105"/>
+              <circle class="dot" cx="60" cy="90" r="4"/><circle class="dot" cx="100" cy="75" r="4"/>
+              <circle class="dot" cx="150" cy="70" r="4"/><circle class="dot" cx="200" cy="50" r="4"/>
+              <circle class="dot" cx="260" cy="40" r="4"/><circle class="dot" cx="320" cy="25" r="4"/>
+              <text class="axis-title x" x="215" y="140">Length of stay (days)</text>
+              <text class="axis-title y" x="0" y="0" transform="translate(12,60) rotate(-90)">Cost proxy (DRG weight)</text>
+            </svg>
+          </div>
+        </div>
+        <div class="panel">
+          <h4>Surgery type breakdown <span class="placeholder-note">(bar)</span></h4>
+          <div class="chart-body">
+            <svg viewBox="0 0 220 155" width="100%" height="143">
+              <line class="axis" x1="25" y1="105" x2="200" y2="105"/>
+              <line class="axis" x1="25" y1="10" x2="25" y2="105"/>
+              <rect class="bar" x="45" y="35" width="45" height="70"/>
+              <rect class="bar alt" x="115" y="55" width="45" height="50"/>
+              <text class="tick" x="50" y="120">Lumbar</text><text class="tick" x="120" y="120">Cervical</text>
+              <text class="axis-title x" x="112" y="140">Surgery site (Problem)</text>
+              <text class="axis-title y" x="0" y="0" transform="translate(10,55) rotate(-90)">Cost proxy (DRG weight)</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/bookmark/2.1.0/schema.json",
+  "displayName": "Compare: line chart",
+  "name": "cmpline0000000000001",
+  "options": {
+    "suppressData": true
+  },
+  "explorationState": {
+    "version": "1.0",
+    "activeSection": "e6compare00000000001",
+    "sections": {
+      "e6compare00000000001": {
+        "visualContainers": {
+          "a9ef81dd0db56b94ec39": {
+            "singleVisual": {
+              "visualType": "lineClusteredColumnComboChart",
+              "objects": {},
+              "display": {
+                "mode": "hidden"
+              }
+            }
+          },
+          "ace2797cc93b26687a6d": {
+            "singleVisual": {
+              "visualType": "lineChart",
+              "objects": {}
+            }
+          }
+        }
+      }
+    }
+  }
+}

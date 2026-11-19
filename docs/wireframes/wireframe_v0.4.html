@@ -1,0 +1,322 @@
+<!-- SCI 60+ Dashboard wireframe v0.4 (S2-15). Chart-first, cohort level. Built on the team's mock-data variables. ALL VALUES ARE FICTIONAL. -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SCI 60+ Dashboard, wireframe v0.4</title>
+<style>
+:root{
+  --frame:#2B5C98; --frame-2:#3F86B6; --navy:#26407A; --amber:#C27A00; --char:#3F4652; --ink:#1F2430; --muted:#5B6270; --line:#DCE2EA; --soft:#F3F6FA;
+  --num: Corbel, Candara, "Segoe UI", Calibri, Carlito, "Helvetica Neue", Arial, sans-serif;
+  --text: Calibri, Carlito, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box} html,body{margin:0}
+body{font-family:var(--text);color:var(--ink);background:linear-gradient(160deg,var(--frame) 0%,var(--frame) 55%,var(--frame-2) 100%);min-height:100vh;padding:12px 16px 22px;font-size:15px}
+button,select{font:inherit} :focus-visible{outline:3px solid #FFD34D;outline-offset:2px} [hidden]{display:none!important}
+.appbar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 18px;color:#fff;max-width:1500px;margin:0 auto 8px}
+.brand{margin-right:auto} .brand h1{font-size:19px;margin:0} .brand p{margin:1px 0 0;font-size:13px;opacity:.85}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.3);border-bottom:0;border-radius:6px 6px 0 0;padding:7px 14px;cursor:pointer}
+.tab[aria-selected="true"]{background:#fff;color:var(--navy);font-weight:700;border-color:#fff}
+.filters{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;max-width:1500px;margin:0 auto 10px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:6px;padding:7px 10px;color:#fff;font-size:14px}
+.filters label{display:flex;gap:6px;align-items:center} .filters select{border:0;border-radius:4px;padding:3px 6px;color:var(--ink)}
+.filters .note{font-size:12.5px;opacity:.85;margin-left:auto}
+.sheet{background:#fff;border-radius:8px;padding:18px 24px 16px;max-width:1500px;margin:0 auto;position:relative}
+.mock{position:absolute;top:14px;right:20px;border:2px dashed #8A5000;color:#8A5000;font-weight:700;border-radius:4px;padding:3px 9px;font-size:13px;transform:rotate(2deg);background:#fff}
+.sheet h2{font-family:var(--num);font-size:36px;margin:0 0 14px;letter-spacing:-.3px;padding-right:120px}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.kpi{background:var(--navy);color:#fff;border-radius:6px;padding:9px 8px 10px;text-align:center}
+.kpi .l{font-size:14.5px;line-height:1.15;min-height:2.3em;display:flex;align-items:center;justify-content:center}
+.kpi .v{font-family:var(--num);font-size:34px;line-height:1.1;margin:1px 0 3px} .kpi .p{font-family:var(--num);font-size:15px;opacity:.95}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 18px}
+.panel{border-top:3px solid var(--navy);padding:8px 2px 4px;min-width:0}
+.panel.wide{grid-column:1/-1}
+.panel h3{font-size:18px;margin:0;color:#222;font-weight:700}
+.panel .sub{font-size:13.5px;color:var(--muted);margin:2px 0 4px}
+.panel svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font-family:var(--text)}
+.dnote{font-size:13px;color:#6A3F00;background:#FFF6E3;border-left:3px solid var(--amber);padding:4px 8px;margin:4px 0 0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:4px;overflow:hidden;margin:4px 0}
+.seg button{border:0;background:#fff;padding:3px 10px;cursor:pointer;font-size:13.5px} .seg button[aria-pressed="true"]{background:var(--navy);color:#fff}
+.warn{font-size:13px;background:var(--soft);border-left:4px solid var(--navy);padding:6px 10px;margin:0 0 12px;max-width:1100px}
+.foot{border-top:1px solid var(--line);margin-top:12px;padding-top:8px;font-size:13px;color:var(--muted)}
+.empty{background:var(--soft);padding:14px;border-left:4px solid var(--navy);font-size:14.5px}
+@media (max-width:1100px){.grid{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){body{padding:8px}.sheet{padding:14px 12px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.sheet h2{font-size:26px;padding-right:0}.mock{position:static;display:inline-block;margin-bottom:8px;transform:none}}
+</style>
+
+<header class="appbar">
+  <div class="brand"><h1>SCI 60+ Dashboard</h1><p>Royal Adelaide Hospital spine registry, cohort view, wireframe v0.4</p></div>
+  <nav class="tabs" role="tablist" aria-label="Dashboard pages">
+    <button class="tab" role="tab" aria-selected="true" data-p="mort">30-day mortality</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="cod">Causes of death</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="cost">Cost of treatment</button>
+    <button class="tab" role="tab" aria-selected="false" data-p="dq">Data completeness</button>
+  </nav>
+</header>
+<div class="filters" role="region" aria-label="Filters">
+  <label>Admitted <select id="f-from"></select> to <select id="f-to"></select></label>
+  <label>Age <select id="f-age"><option>All</option><option>60–69</option><option>70–79</option><option>80+</option></select></label>
+  <label>Gender <select id="f-sex"><option>All</option><option>Male</option><option>Female</option></select></label>
+  <label>ASIA <select id="f-asia"><option>All</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option></select></label>
+  <label>Surgery <select id="f-surg"><option>All</option><option>Yes</option><option>No</option></select></label>
+  <label>Funding <select id="f-pp"><option>All</option><option>Public</option><option>Private</option></select></label>
+  <label>Aboriginal or TSI <select id="f-atsi"><option>All</option><option>Aboriginal and/or TSI</option><option>Neither</option><option>Not stated</option></select></label>
+  <span class="note">Groups under 5 people are hidden</span>
+</div>
+
+<main class="sheet">
+  <div class="mock">MOCK DATA</div>
+  <div class="warn" id="warn">Aboriginal and Torres Strait Islander users are advised that this dashboard contains de-identified statistics which may relate to deceased persons.</div>
+  <h2 id="title"></h2>
+  <div class="kpis" id="kpis"></div>
+
+  <section data-page="mort" class="grid">
+    <div class="panel"><h3>30-day mortality by year of admission</h3><div id="c-m-trend"></div></div>
+    <div class="panel"><h3>When deaths happen in the first 30 days</h3><div id="c-m-timing"></div></div>
+    <div class="panel wide"><h3>30-day mortality by patient group</h3><p class="sub">Admitted 2021–2023 compared with 2024–2026</p><div id="c-m-groups"></div><p class="dnote" id="n-charlson"></p></div>
+  </section>
+
+  <section data-page="cod" class="grid" hidden>
+    <div class="panel wide"><h3>Top 5 coded conditions in patients who died</h3><p class="sub">ICD-10-AM codes from the admission in which the patient died. Used as a proxy for cause of death.</p><div class="seg" role="group" aria-label="Deaths within"><button aria-pressed="false" data-w="30">Died within 30 days</button><button aria-pressed="true" data-w="365">Died within 1 year</button><button aria-pressed="false" data-w="all">All recorded deaths</button></div><div id="c-c-top"></div><p class="dnote">The registry has no cause-of-death field. Deaths after discharge need death-record linkage to get a cause; they are shown as "No coded cause".</p></div>
+    <div class="panel"><h3>Coded conditions by age group</h3><div id="c-c-age"></div></div>
+    <div class="panel"><h3>Deaths per year, top 3 conditions</h3><div id="c-c-trend"></div></div>
+  </section>
+
+  <section data-page="cost" class="grid" hidden>
+    <div class="panel wide"><h3>Top 5 treatments by total estimated cost</h3>
+      <div class="seg" role="group" aria-label="Group treatments by"><button aria-pressed="true" data-g="drg">Group by DRG</button><button aria-pressed="false" data-g="proc">Group by operation</button></div>
+      <div id="c-t-top"></div><p class="dnote">Estimated cost = DRG cost weight (NWAU) × National Efficient Price. Mock weights and a placeholder price of $7,000 are used here; replace with IHACPA values for each year.</p></div>
+    <div class="panel"><h3>Mean cost per admission, top 5 treatments</h3><p class="sub">Admitted 2021–2023 compared with 2024–2026</p><div id="c-t-mean"></div></div>
+    <div class="panel"><h3>Length of stay and estimated cost</h3><div id="c-t-scatter"></div></div>
+    <div class="panel wide"><h3>Total estimated cost by year of admission</h3><div id="c-t-year"></div></div>
+  </section>
+
+  <section data-page="dq" class="grid" hidden>
+    <div class="panel"><h3>Key fields filled in</h3><p class="sub">% of admissions with a value</p><div id="c-d-fields"></div></div>
+    <div class="panel"><h3>REDCap form status</h3><p class="sub">Number of admissions</p><div id="c-d-forms"></div></div>
+  </section>
+
+  <div class="foot">Mortality uses each patient's first (index) admission. Cost uses all admissions. Names, MRN, date of birth, postcode and religion are removed in the pipeline and never shown. Dates include the year.</div>
+</main>
+
+<script>
+/* ======================= helpers ======================= */
+const NS='http://www.w3.org/2000/svg', C={navy:'#26407A',amber:'#C27A00',char:'#3F4652',grid:'#E3E6EB',muted:'#5B6270',teal:'#2E8B7A',violet:'#6B4FA0',sand:'#9A9EA6'};
+const $=id=>document.getElementById(id);
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
+function tx(p,x,y,s,a={}){const t=el('text',Object.assign({x,y,fill:'#333','font-size':13.5},a),p);t.textContent=s;return t;}
+function tip(node,s){ el('title',{},node).textContent=s; }
+function rng(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+const pick=(r,arr,w)=>{let u=r()*w.reduce((a,b)=>a+b,0);for(let i=0;i<arr.length;i++){u-=w[i];if(u<=0)return arr[i];}return arr[arr.length-1];};
+const p2=v=>v==null||isNaN(v)?'n<5':v.toFixed(2)+'%';
+const aud=v=>'$'+Math.round(v).toLocaleString('en-AU');
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let pid=0;
+function svg(host,W,H,label){ host.innerHTML=''; const s=el('svg',{viewBox:`0 0 ${W} ${H}`,role:'img','aria-label':label},host);
+  const d=el('defs',{},s), id='h'+(pid++), pt=el('pattern',{id,width:6,height:6,patternUnits:'userSpaceOnUse',patternTransform:'rotate(45)'},d);
+  el('rect',{width:6,height:6,fill:C.amber},pt); el('line',{x1:0,y1:0,x2:0,y2:6,stroke:'#fff','stroke-width':2.2},pt); s.hatch=`url(#${id})`; return s; }
+function yTitle(s,x,y,t){ const g=el('g',{transform:`translate(${x} ${y}) rotate(-90)`},s); tx(g,0,0,t,{'text-anchor':'middle','font-size':14,'font-weight':700}); }
+function niceMax(v){ const e=10**Math.floor(Math.log10(v||1)), m=v/e; return (m<=1?1:m<=2?2:m<=2.5?2.5:m<=5?5:10)*e; }
+function shape(s,kind,x,y,r,fill){ if(kind==='tri') return el('path',{d:`M${x} ${y-r-1} L${x+r+1} ${y+r} L${x-r-1} ${y+r} Z`,fill},s);
+  if(kind==='sq') return el('rect',{x:x-r,y:y-r,width:2*r,height:2*r,fill},s); if(kind==='dia') return el('path',{d:`M${x} ${y-r-1} L${x+r+1} ${y} L${x} ${y+r+1} L${x-r-1} ${y} Z`,fill},s);
+  return el('circle',{cx:x,cy:y,r,fill},s); }
+function legend(s,x,y,items,gap=210){ items.forEach((it,i)=>{ const lx=x+i*gap;
+  if(it.shape){ if(!it.hollow) el('line',{x1:lx,x2:lx+26,y1:y-4,y2:y-4,stroke:it.c,'stroke-width':2.4,'stroke-dasharray':it.dash||''},s); const m=shape(s,it.shape,lx+13,y-4,4.5,it.hollow?'#fff':it.c); if(it.hollow){m.setAttribute('stroke',it.c);m.setAttribute('stroke-width',2);} }
+  else el('rect',{x:lx,y:y-11,width:20,height:12,fill:it.fill||it.c,stroke:it.stroke||'none'},s);
+  tx(s,lx+32,y,it.n,{'font-size':14}); }); }
+
+/* ======================= mock data (team schema) ======================= */
+const DRG={A06:{d:'A06 Tracheostomy or ventilation ≥ 336 h',nwau:22.0,los:38},B61:{d:'B61 Spinal cord conditions',nwau:3.9,los:16},I09:{d:'I09 Spinal fusion',nwau:5.8,los:12},I10:{d:'I10 Other back and neck procedures',nwau:2.6,los:8},B60:{d:'B60 Established paraplegia or quadriplegia',nwau:2.2,los:10}};
+const NEP=7000, CUTOFF=new Date(2026,8,10), START=new Date(2021,0,1);
+const COND={sepsis:'Sepsis',resp:'Respiratory failure',pneu:'Pneumonia',cardio:'Cardiovascular (MI, heart failure)',pe:'Pulmonary embolism',uti:'Urinary tract infection',pi:'Pressure injury'};
+const PRIORITY=['sepsis','resp','pneu','cardio','pe','uti','pi'];
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+function makeData(){
+  const r=rng(412), A=[];
+  for(let p=1;p<=362;p++){
+    const age=60+Math.floor(Math.pow(r(),1.3)*33), gender=r()<.68?'Male':'Female';
+    const atsi=pick(r,['Neither','Aboriginal and/or TSI','Not stated'],[91,6,3]), pp=r()<.85?'Public':'Private';
+    const region=pick(r,['Cervical','Thoracic','Lumbar'],[60,20,20]), asia=pick(r,['A','B','C','D','E'],[12,10,30,45,3]);
+    const complete=asia==='A'||asia==='B', hfrs=Math.min(30,Math.floor(r()*r()*24+(age-60)*.25)), charlson=r()<.35?Math.min(8,Math.floor(r()*4+(age-60)/10)):null;
+    const admit=addDays(START,Math.floor(r()*2060));
+    const surgery=r()<(complete?.8:.62);
+    const proc=!surgery?null:region==='Cervical'?pick(r,['Posterior cervical decompression and fusion','Anterior cervical discectomy and fusion','Laminectomy, decompression only'],[50,30,20]):pick(r,['Thoracolumbar posterior fusion','Laminectomy, decompression only'],[70,30]);
+    const icuH=region==='Cervical'&&complete?72+Math.floor(r()*520):(r()<.3?12+Math.floor(r()*84):0);
+    const mvH=region==='Cervical'&&complete&&r()<.55?48+Math.floor(r()*700):(icuH&&r()<.15?Math.floor(r()*60):0);
+    const drg=mvH>=336?'A06':!surgery?'B61':proc.startsWith('Laminectomy')?'I10':'I09';
+    const cx={pneu:r()<.13+(complete&&region==='Cervical'?.2:0),sepsis:r()<.07,uti:r()<.25,pi:r()<.08+(complete?.06:0),resp:r()<.05+(mvH?.15:0),pe:r()<.02,cardio:r()<.04+(age-60)*.003};
+    let los=Math.max(2,Math.round(DRG[drg].los*(.6+r()*.9)+Object.values(cx).filter(Boolean).length*4));
+    const hBand=hfrs<5?'Low':hfrs<=15?'Intermediate':'High';
+    let p30=.015+(age-60)*.004+(complete?.1:0)+(hBand==='High'?.07:hBand==='Intermediate'?.02:0)+(cx.pneu?.08:0)+(cx.sepsis?.16:0)+(cx.resp?.2:0);
+    p30=Math.min(.8,p30);
+    let death=null, inHosp=false, codedCause=null;
+    if(r()<p30){ const dd=1+Math.floor(Math.pow(r(),1.6)*30); inHosp=r()<.74; if(inHosp) los=Math.min(los,dd); else if(dd<=los) los=Math.max(1,dd-2); death=addDays(admit,dd); }
+    else if(r()<p30*1.3+.07){ death=addDays(admit,31+Math.floor(r()*335)); }
+    else if(r()<.25){ death=addDays(admit,366+Math.floor(r()*1500)); }
+    if(death&&death>CUTOFF) death=null;
+    if(inHosp){ codedCause=PRIORITY.find(k=>cx[k])||pick(r,['cardio','resp'],[6,4]); }
+    const discharge=addDays(admit,los);
+    const mode=inHosp?'Died in hospital':pick(r,['Transferred to rehabilitation','Discharged home','Transferred to other hospital','Residential aged care'],[50,22,15,13]);
+    const fs=()=>pick(r,['Complete','Unverified','Incomplete'],[72,17,11]);
+    const base={pid:p,gender,atsi,pp,region,asia,hfrs,hBand,charlson,sts:r()<.8?3+Math.floor(r()*9):null,deathDate:death,forms:{'Patient details':fs(),'Demographics':fs(),'Diagnosis':pick(r,['Complete','Unverified','Incomplete'],[58,22,20]),'Admissions':fs()}};
+    A.push(Object.assign({},base,{inst:1,admit,age,discharge,los,icuH,mvH,drg,surgery,proc,cx,inHosp,codedCause,mode,index:true,hasICD:true,hasACHI:surgery?r()<.93:true}));
+    // readmissions: some later deaths happen during a readmission and get a coded condition
+    const readmit=death&&!inHosp&&r()<.3 ? {d:new Date(Math.max(+addDays(death,-(2+Math.floor(r()*12))),+addDays(discharge,1))),die:true} : (r()<.12?{d:addDays(discharge,60+Math.floor(r()*700)),die:false}:null);
+    if(readmit&&readmit.d<CUTOFF){ const rd=readmit.die?'B61':'B60', rl=readmit.die?Math.max(1,Math.round((death-readmit.d)/864e5)):3+Math.floor(r()*18);
+      const rc=readmit.die?pick(r,['pneu','sepsis','uti','cardio','resp','pi'],[30,22,14,16,10,8]):null;
+      A.push(Object.assign({},base,{inst:2,admit:readmit.d,age:age+Math.floor((readmit.d-admit)/3.15e10),discharge:addDays(readmit.d,rl),los:rl,icuH:0,mvH:0,drg:rd,surgery:false,proc:null,cx:{},inHosp:readmit.die,codedCause:rc,mode:readmit.die?'Died in hospital':'Discharged home',index:false,hasICD:true,hasACHI:true})); }
+  }
+  A.forEach(a=>{ a.cost=DRG[a.drg].nwau*NEP*(.85+.3*Math.min(a.los/DRG[a.drg].los,3)); a.year=a.admit.getFullYear(); a.ageBand=a.age>=80?'80+':a.age>=70?'70–79':'60–69';
+    a.days=a.deathDate?Math.round((a.deathDate-a.admit)/864e5):null; });
+  // cause of death per patient: from the admission in which they died, else "No coded cause"
+  const byP={}; A.forEach(a=>{ (byP[a.pid]=byP[a.pid]||[]).push(a); });
+  A.filter(a=>a.index).forEach(a=>{ const dyingAdm=byP[a.pid].find(x=>x.inHosp); a.cod=a.deathDate?(dyingAdm?COND[dyingAdm.codedCause]:'No coded cause (died after discharge)'):null;
+    a.died30=a.days!=null&&a.days<=30; a.died1y=a.days!=null&&a.days<=365; a.fu30=(CUTOFF-a.admit)/864e5>=30; });
+  return A;
+}
+const ALL=makeData();
+
+/* ======================= filters ======================= */
+const YEARS=[2021,2022,2023,2024,2025,2026];
+$('f-from').innerHTML=YEARS.map(y=>`<option ${y===2021?'selected':''}>${y}</option>`).join(''); $('f-to').innerHTML=YEARS.map(y=>`<option ${y===2026?'selected':''}>${y}</option>`).join('');
+function F(){ const g=id=>$(id).value; return {from:+g('f-from'),to:+g('f-to'),age:g('f-age'),sex:g('f-sex'),asia:g('f-asia'),surg:g('f-surg'),pp:g('f-pp'),atsi:g('f-atsi')}; }
+function apply(list,f){ return list.filter(a=>a.year>=f.from&&a.year<=f.to&&(f.age==='All'||a.ageBand===f.age)&&(f.sex==='All'||a.gender===f.sex)&&(f.asia==='All'||a.asia===f.asia)
+  &&(f.surg==='All'||(f.surg==='Yes')===a.surgery)&&(f.pp==='All'||a.pp===f.pp)&&(f.atsi==='All'||a.atsi===f.atsi)); }
+const rate=(list,test,den=x=>true)=>{ const d=list.filter(den); return d.length<5?null:d.filter(test).length/d.length*100; };
+const m30=list=>rate(list,a=>a.died30,a=>a.fu30);
+
+/* ======================= chart types ======================= */
+function lineChart(host,xs,series,o){
+  const W=640,H=360,L=70,R=20,T=16,B=96,pw=W-L-R,ph=H-T-B, s=svg(host,W,H,o.label), max=o.max, x=i=>L+pw*(i+.5)/xs.length, y=v=>T+ph*(1-v/max);
+  for(let t=0;t<=max+1e-9;t+=o.step){ el('line',{x1:L,x2:W-R,y1:y(t),y2:y(t),stroke:C.grid},s); tx(s,L-8,y(t)+4,o.tick(t),{'text-anchor':'end'}); }
+  el('line',{x1:L,x2:L,y1:T,y2:T+ph,stroke:'#888'},s); el('line',{x1:L,x2:W-R,y1:T+ph,y2:T+ph,stroke:'#888'},s);
+  xs.forEach((lab,i)=>tx(s,x(i),T+ph+20,lab,{'text-anchor':'middle'}));
+  tx(s,L+pw/2,T+ph+44,o.xTitle,{'text-anchor':'middle','font-size':14,'font-weight':700}); yTitle(s,18,T+ph/2,o.yTitle);
+  series.forEach(se=>{ let d='',pen=false; se.v.forEach((v,i)=>{ if(v==null){pen=false;return;} d+=(pen?'L':'M')+x(i)+' '+y(v)+' '; pen=true; });
+    el('path',{d,fill:'none',stroke:se.c,'stroke-width':2.4,'stroke-dasharray':se.dash||''},s);
+    se.v.forEach((v,i)=>{ if(v==null){ tx(s,x(i),T+ph-8,'n<5',{'text-anchor':'middle','font-size':12,fill:C.muted}); return; }
+      const hollow=o.partial&&i===xs.length-1, m=shape(s,se.shape,x(i),y(v),5,hollow?'#fff':se.c); if(hollow) m.setAttribute('stroke',se.c),m.setAttribute('stroke-width',2);
+      tip(m,`${se.n}, ${xs[i]}: ${o.fmt(v)}${se.nn?` (n = ${se.nn[i]})`:''}`);
+      if(o.labels) tx(s,x(i),y(v)-11,o.fmt(v),{'text-anchor':'middle','font-size':12.5,fill:'#222'}); }); });
+  legend(s,L,H-18,series.map(se=>({c:se.c,n:se.n,shape:se.shape,dash:se.dash})).concat(o.partial?[{c:'#555',n:'Hollow marker = 2026 part year',shape:'circle',hollow:true}]:[]),o.lgap||230);
+}
+function barH(host,items,o){  // horizontal bars with value labels
+  const W=o.W||900,rowH=o.rowH||40,L=o.left||330,R=o.R||230,T=6,H=T+items.length*rowH+60, s=svg(host,W,H,o.label), max=o.max||niceMax(Math.max(...items.map(i=>i.v))), x=v=>L+(W-L-R)*v/max;
+  items.forEach((it,i)=>{ const y=T+i*rowH+rowH*.18, h=rowH*.64;
+    tx(s,L-10,y+h/2+5,it.label,{'text-anchor':'end','font-size':14.5,fill:it.muted?C.muted:'#222'});
+    const b=el('rect',{x:L,y,width:Math.max(0,x(it.v)-L),height:h,fill:it.fill||C.navy},s); tip(b,`${it.label}: ${it.text}`);
+    tx(s,x(it.v)+8,y+h/2+5,it.text,{'font-size':13.5,fill:'#222'}); });
+  const yb=T+items.length*rowH; el('line',{x1:L,x2:L,y1:T,y2:yb,stroke:'#888'},s); el('line',{x1:L,x2:W-R,y1:yb,y2:yb,stroke:'#888'},s);
+  for(let t=0;t<=max+1e-9;t+=max/4){ el('line',{x1:x(t),x2:x(t),y1:yb,y2:yb+5,stroke:'#888'},s); tx(s,x(t),yb+20,o.tick(t),{'text-anchor':'middle','font-size':12.5}); }
+  tx(s,L+(W-L-R)/2,yb+44,o.xTitle,{'text-anchor':'middle','font-size':14,'font-weight':700}); yTitle(s,14,T+(yb-T)/2,o.yTitle);
+}
+function paired(host,cats,a,b,o){  // kept Medicare design: solid navy vs striped amber
+  const W=o.W||900,rowH=44,L=o.left||250,R=90,T=6,H=T+cats.length*rowH+92, bh=15, s=svg(host,W,H,o.label), max=o.max, x=v=>L+(W-L-R)*(v??0)/max;
+  cats.forEach((c,i)=>{ const y=T+i*rowH+(rowH-2*bh)/2-2;
+    if(c.group) tx(s,L-10,y+bh+5,c.label,{'text-anchor':'end','font-size':14.5}); else tx(s,L-10,y+bh+5,c,{'text-anchor':'end','font-size':14.5});
+    const ra=el('rect',{x:L,y,width:x(a[i])-L,height:bh,fill:C.navy},s), rb=el('rect',{x:L,y:y+bh+1,width:x(b[i])-L,height:bh,fill:s.hatch,stroke:C.amber},s);
+    tip(ra,`${c.label||c}, ${o.a}: ${o.fmt(a[i])}`); tip(rb,`${c.label||c}, ${o.b}: ${o.fmt(b[i])}`);
+    tx(s,x(a[i])+6,y+bh-3,o.fmt(a[i]),{'font-size':12.5}); tx(s,x(b[i])+6,y+2*bh-2,o.fmt(b[i]),{'font-size':12.5}); });
+  (o.dividers||[]).forEach(i=>el('line',{x1:20,x2:W-R,y1:T+i*rowH,y2:T+i*rowH,stroke:'#C9D0DA','stroke-dasharray':'3 3'},s));
+  const yb=T+cats.length*rowH; el('line',{x1:L,x2:L,y1:T,y2:yb,stroke:'#888'},s); el('line',{x1:L,x2:W-R,y1:yb,y2:yb,stroke:'#888'},s);
+  for(let t=0;t<=max+1e-9;t+=max/4){ el('line',{x1:x(t),x2:x(t),y1:yb,y2:yb+5,stroke:'#888'},s); tx(s,x(t),yb+20,o.tick(t),{'text-anchor':'middle','font-size':12.5}); }
+  tx(s,L+(W-L-R)/2,yb+44,o.xTitle,{'text-anchor':'middle','font-size':14,'font-weight':700}); yTitle(s,14,T+(yb-T)/2,o.yTitle);
+  legend(s,L,yb+78,[{c:C.navy,n:`${o.a} (solid)`},{fill:s.hatch,stroke:C.amber,n:`${o.b} (striped)`}],300);
+}
+function stackCol(host,xs,stacks,o){
+  const W=o.W||640,H=o.H||360,L=o.L||70,R=20,T=16,B=96,pw=W-L-R,ph=H-T-B, s=svg(host,W,H,o.label), tot=xs.map((_,i)=>stacks.reduce((a,st)=>a+st.v[i],0)), max=o.max||niceMax(Math.max(...tot)), bw=pw/xs.length*.6, x=i=>L+pw*(i+.5)/xs.length, y=v=>T+ph*(1-v/max);
+  for(let t=0;t<=max+1e-9;t+=max/4){ el('line',{x1:L,x2:W-R,y1:y(t),y2:y(t),stroke:C.grid},s); tx(s,L-8,y(t)+4,o.tick(t),{'text-anchor':'end'}); }
+  el('line',{x1:L,x2:L,y1:T,y2:T+ph,stroke:'#888'},s); el('line',{x1:L,x2:W-R,y1:T+ph,y2:T+ph,stroke:'#888'},s);
+  xs.forEach((lab,i)=>{ let acc=0; stacks.forEach((st,k)=>{ const v=st.v[i]; if(!v) return; const rct=el('rect',{x:x(i)-bw/2,y:y(acc+v),width:bw,height:y(acc)-y(acc+v),fill:k===1?s.hatch:st.c,stroke:k===1?C.amber:'#fff','stroke-width':k===1?1:.5},s);
+      tip(rct,`${lab}, ${st.n}: ${o.fmt(v)}`); acc+=v; }); tx(s,x(i),y(acc)-7,o.fmt(tot[i]),{'text-anchor':'middle','font-size':12.5,fill:'#222'}); tx(s,x(i),T+ph+20,lab,{'text-anchor':'middle'}); });
+  tx(s,L+pw/2,T+ph+44,o.xTitle,{'text-anchor':'middle','font-size':14,'font-weight':700}); yTitle(s,16,T+ph/2,o.yTitle);
+  legend(s,L,H-18,stacks.map((st,k)=>k===1?{fill:s.hatch,stroke:C.amber,n:st.n+' (striped)'}:{c:st.c,n:st.n+' (solid)'}),o.lgap||260);
+}
+function stack100(host,rows,parts,colors,o){
+  const W=640,rowH=54,L=90,R=20,T=10,H=T+rows.length*rowH+60+Math.ceil(parts.length/2)*22, s=svg(host,W,H,o.label), x=v=>L+(W-L-R)*v/100;
+  rows.forEach((r,i)=>{ const y=T+i*rowH+8, h=rowH-18; tx(s,L-10,y+h/2+5,r.label,{'text-anchor':'end','font-size':14.5}); tx(s,L-10,y+h/2+20,`n = ${r.n}`,{'text-anchor':'end','font-size':12,fill:C.muted});
+    if(r.n<5){ tx(s,L+8,y+h/2+5,'Fewer than 5 deaths, hidden',{'font-size':13,fill:C.muted}); return; }
+    let acc=0; r.v.forEach((v,k)=>{ if(!v) return; const rc=el('rect',{x:x(acc),y,width:x(acc+v)-x(acc),height:h,fill:colors[k],stroke:'#fff','stroke-width':1.5},s); tip(rc,`${r.label}, ${parts[k]}: ${p2(v)}`);
+      if(x(acc+v)-x(acc)>46) tx(s,x(acc)+(x(acc+v)-x(acc))/2,y+h/2+5,Math.round(v)+'%',{'text-anchor':'middle','font-size':12.5,fill:'#fff','font-weight':700}); acc+=v; }); });
+  const yb=T+rows.length*rowH; [0,25,50,75,100].forEach(t=>tx(s,x(t),yb+16,t+'.00%',{'text-anchor':'middle','font-size':12.5}));
+  tx(s,L+(W-L-R)/2,yb+38,o.xTitle,{'text-anchor':'middle','font-size':14,'font-weight':700}); yTitle(s,14,T+(yb-T)/2,o.yTitle);
+  parts.forEach((p,k)=>{ const lx=L+(k%2)*270, ly=yb+62+Math.floor(k/2)*22; el('rect',{x:lx,y:ly-11,width:16,height:12,fill:colors[k]},s); tx(s,lx+22,ly,`${k+1}. ${p}`,{'font-size':13.5}); });
+}
+function scatter(host,pts,o){
+  const W=640,H=380,L=86,R=20,T=16,B=100,pw=W-L-R,ph=H-T-B, s=svg(host,W,H,o.label), mx=niceMax(Math.max(...pts.map(p=>p.x))), my=niceMax(Math.max(...pts.map(p=>p.y))), x=v=>L+pw*v/mx, y=v=>T+ph*(1-v/my);
+  for(let i=0;i<=4;i++){ const vy=my*i/4, vx=mx*i/4; el('line',{x1:L,x2:W-R,y1:y(vy),y2:y(vy),stroke:C.grid},s); tx(s,L-8,y(vy)+4,aud(vy),{'text-anchor':'end','font-size':12.5}); tx(s,x(vx),T+ph+20,Math.round(vx),{'text-anchor':'middle','font-size':12.5}); }
+  el('line',{x1:L,x2:L,y1:T,y2:T+ph,stroke:'#888'},s); el('line',{x1:L,x2:W-R,y1:T+ph,y2:T+ph,stroke:'#888'},s);
+  pts.forEach(p=>{ const m=shape(s,p.icu?'tri':'circle',x(p.x),y(p.y),p.icu?4:3.4,p.icu?C.amber:C.navy); m.setAttribute('fill-opacity',.8); tip(m,`${p.x} days, ${aud(p.y)}, ${p.icu?'ICU':'no ICU'}`); });
+  tx(s,L+pw/2,T+ph+44,'Length of stay (days)',{'text-anchor':'middle','font-size':14,'font-weight':700}); yTitle(s,16,T+ph/2,'Estimated cost per admission (AUD)');
+  shape(s,'tri',L+6,H-22,4.5,C.amber); tx(s,L+18,H-18,'Admission with ICU stay',{'font-size':14}); shape(s,'circle',L+240,H-22,4,C.navy); tx(s,L+252,H-18,'No ICU stay',{'font-size':14});
+}
+
+/* ======================= pages ======================= */
+const TITLES={mort:'30-Day Mortality, SCI 60+',cod:'Top 5 Causes of Death, SCI 60+',cost:'Cost of Top 5 Treatments, SCI 60+',dq:'Data Completeness, SCI 60+'};
+let page='mort', groupBy='drg', win='365';
+function kpis(idx,adm,allIdx,allAdm){
+  const mean=l=>l.length<5?null:l.reduce((s,a)=>s+a.cost,0)/l.length, med=l=>{ if(l.length<5) return null; const v=l.map(a=>a.los).sort((p,q)=>p-q), m=v.length>>1; return v.length%2?v[m]:(v[m-1]+v[m])/2; };
+  const K=[['Patients (first admission)',idx.length,allIdx.length,v=>v],['30-day mortality',m30(idx),m30(allIdx),p2],['In-hospital mortality',rate(idx,a=>a.inHosp),rate(allIdx,a=>a.inHosp),p2],
+           ['Median length of stay',med(idx),med(allIdx),v=>v==null?'n<5':v+' days'],['Mean estimated cost per admission',mean(adm),mean(allAdm),v=>v==null?'n<5':aud(v)]];
+  $('kpis').innerHTML=K.map((k,i)=>`<div class="kpi"><div class="l">${k[0]}</div><div class="v" style="${i===4?'font-size:30px':''}">${k[3](k[1])}</div><div class="p">Whole cohort: ${k[3](k[2])}</div></div>`).join('');
+}
+function render(){
+  const f=F(), adm=apply(ALL,f), idx=adm.filter(a=>a.index), allIdx=ALL.filter(a=>a.index);
+  $('title').textContent=`${TITLES[page]}, ${f.from}–${f.to}`;
+  kpis(idx,adm,allIdx,ALL);
+  const ys=YEARS.filter(y=>y>=f.from&&y<=f.to), early=idx.filter(a=>a.year<=2023), late=idx.filter(a=>a.year>=2024);
+  if(page==='mort'){
+    const v=ys.map(y=>m30(idx.filter(a=>a.year===y))), nn=ys.map(y=>idx.filter(a=>a.year===y).length);
+    lineChart($('c-m-trend'),ys.map(String),[{n:'30-day mortality',c:C.navy,shape:'circle',v,nn}],{label:'30-day mortality by year',max:40,step:10,tick:t=>t+'.00%',fmt:p2,xTitle:'Year of admission',yTitle:'30-day mortality (%)',labels:true,partial:ys.includes(2026)});
+    const bins=[[0,7,'Days 0–7'],[8,14,'Days 8–14'],[15,21,'Days 15–21'],[22,30,'Days 22–30']], d30=idx.filter(a=>a.died30);
+    stackCol($('c-m-timing'),bins.map(b=>b[2]),[{n:'Died in hospital',c:C.navy,v:bins.map(b=>d30.filter(a=>a.inHosp&&a.days>=b[0]&&a.days<=b[1]).length)},{n:'Died after discharge',c:C.amber,v:bins.map(b=>d30.filter(a=>!a.inHosp&&a.days>=b[0]&&a.days<=b[1]).length)}],
+      {label:'Deaths within 30 days by days since admission',tick:t=>Math.round(t),fmt:v=>v+' deaths',xTitle:'Days since admission (Day 0 = day of admission)',yTitle:'Number of deaths',lgap:260});
+    const G=[['60–69',a=>a.ageBand==='60–69'],['70–79',a=>a.ageBand==='70–79'],['80+',a=>a.ageBand==='80+'],['ASIA A',a=>a.asia==='A'],['ASIA B',a=>a.asia==='B'],['ASIA C',a=>a.asia==='C'],['ASIA D or E',a=>a.asia==='D'||a.asia==='E'],
+      ['Frailty (HFRS) low, < 5',a=>a.hBand==='Low'],['Frailty intermediate, 5–15',a=>a.hBand==='Intermediate'],['Frailty high, > 15',a=>a.hBand==='High'],
+      ['Charlson 0–2*',a=>a.charlson!=null&&a.charlson<=2],['Charlson 3 or more*',a=>a.charlson!=null&&a.charlson>=3],['Charlson not recorded',a=>a.charlson==null],['Had surgery',a=>a.surgery],['No surgery',a=>!a.surgery]];
+    paired($('c-m-groups'),G.map(g=>'Age '+g[0].replace(/^(\d)/,'$1')).map((l,i)=>i<3?l:G[i][0]),G.map(g=>m30(early.filter(g[1]))),G.map(g=>m30(late.filter(g[1]))),
+      {label:'30-day mortality by patient group, 2021–2023 vs 2024–2026',W:1300,left:300,max:60,tick:t=>t.toFixed(0)+'.00%',fmt:p2,xTitle:'30-day mortality (%)',yTitle:'Patient group',a:'Admitted 2021–2023',b:'Admitted 2024–2026',dividers:[3,7,10,13]});
+    const cp=idx.filter(a=>a.charlson!=null).length; $('n-charlson').textContent=`*Charlson score is recorded for ${cp} of ${idx.length} patients (${p2(cp/idx.length*100)}). Rows marked * use only those patients.`;
+  }
+  if(page==='cod'){
+    const dead=idx.filter(a=>a.cod&&(win==='all'||a.days<=+win)), counts={}; dead.forEach(a=>counts[a.cod]=(counts[a.cod]||0)+1);
+    const coded=Object.entries(counts).filter(([k])=>!k.startsWith('No coded')).sort((a,b)=>b[1]-a[1]), top=coded.slice(0,5), other=coded.slice(5).reduce((s,e)=>s+e[1],0), none=counts['No coded cause (died after discharge)']||0, N=dead.length;
+    if(N<5){ $('c-c-top').innerHTML='<p class="empty">Fewer than 5 deaths match these filters, so the chart is hidden.</p>'; }
+    else barH($('c-c-top'),top.map(([k,v],i)=>({label:`${i+1}. ${k}`,v,text:`${v} deaths (${p2(v/N*100)})`})).concat(other?[{label:'Other coded conditions',v:other,text:`${other} deaths (${p2(other/N*100)})`,fill:C.sand}]:[]).concat([{label:'No coded cause (died after discharge)',v:none,text:`${none} deaths (${p2(none/N*100)})`,fill:'#C9CED6',muted:true}]),
+      {label:'Top 5 coded conditions in patients who died',W:1300,tick:t=>Math.round(t),xTitle:'Number of deaths',yTitle:'Coded condition',left:380});
+    const names=top.map(t=>t[0]), cols=[C.navy,C.amber,C.teal,C.violet,C.char,C.sand];
+    const rows=['60–69','70–79','80+'].map(b=>{ const d=dead.filter(a=>a.ageBand===b&&!a.cod.startsWith('No coded')); return {label:b,n:d.length,v:names.map(nm=>d.length?d.filter(a=>a.cod===nm).length/d.length*100:0).concat([d.length?d.filter(a=>!names.includes(a.cod)).length/d.length*100:0])}; });
+    stack100($('c-c-age'),rows,names.concat(['Other coded']),cols,{label:'Coded conditions by age group',xTitle:'% of deaths with a coded condition',yTitle:'Age group'});
+    const shapes=['circle','tri','sq'], lc=[C.navy,C.amber,C.teal];
+    const t3=names.slice(0,3).map((nm,i)=>({n:nm.replace(' (MI, heart failure)',''),c:lc[i],shape:shapes[i],dash:i===2?'5 3':'',v:ys.map(y=>dead.filter(a=>a.year===y&&a.cod===nm).length)}));
+    lineChart($('c-c-trend'),ys.map(String),t3,{label:'Deaths per year for top 3 coded conditions',max:Math.max(5,niceMax(Math.max(...t3.flatMap(s=>s.v)))),step:Math.max(1,niceMax(Math.max(...t3.flatMap(s=>s.v)))/5),tick:t=>Math.round(t),fmt:v=>v+' deaths',xTitle:'Year of admission',yTitle:'Number of deaths',partial:ys.includes(2026),lgap:200});
+  }
+  if(page==='cost'){
+    const key=groupBy==='drg'?(a=>DRG[a.drg].d):(a=>a.proc||'No operation');
+    const tot={},cnt={}; adm.forEach(a=>{ const k=key(a); tot[k]=(tot[k]||0)+a.cost; cnt[k]=(cnt[k]||0)+1; });
+    const top=Object.keys(tot).filter(k=>cnt[k]>=5).sort((a,b)=>tot[b]-tot[a]).slice(0,5);
+    if(!top.length){ $('c-t-top').innerHTML='<p class="empty">Fewer than 5 admissions match these filters.</p>'; return; }
+    barH($('c-t-top'),top.map((k,i)=>({label:`${i+1}. ${k}`,v:tot[k],text:`${aud(tot[k])} (${cnt[k]} admissions)`})),{label:'Top 5 treatments by total estimated cost',tick:aud,xTitle:'Total estimated cost (AUD)',yTitle:groupBy==='drg'?'DRG':'Operation',left:420,W:1300});
+    const e=adm.filter(a=>a.year<=2023), l=adm.filter(a=>a.year>=2024), mean=(list,k)=>{ const x=list.filter(a=>key(a)===k); return x.length<5?null:x.reduce((s,a)=>s+a.cost,0)/x.length; };
+    const ma=top.map(k=>mean(e,k)), mb=top.map(k=>mean(l,k)), mx=niceMax(Math.max(...ma,...mb.filter(v=>v!=null),1));
+    paired($('c-t-mean'),top.map((k,i)=>`${i+1}. ${k.slice(0,24)}${k.length>24?'…':''}`),ma,mb,{label:'Mean cost per admission',W:700,left:250,max:mx,tick:aud,fmt:v=>v==null?'n<5':aud(v),xTitle:'Mean estimated cost (AUD)',yTitle:'Treatment',a:'2021–2023',b:'2024–2026'});
+    scatter($('c-t-scatter'),adm.map(a=>({x:a.los,y:a.cost,icu:a.icuH>0})),{label:'Length of stay and estimated cost'});
+    stackCol($('c-t-year'),ys.map(String),[{n:'Admissions with ICU stay',c:C.navy,v:ys.map(y=>adm.filter(a=>a.year===y&&a.icuH>0).reduce((s,a)=>s+a.cost,0))},{n:'Admissions without ICU',c:C.amber,v:ys.map(y=>adm.filter(a=>a.year===y&&!a.icuH).reduce((s,a)=>s+a.cost,0))}],
+      {label:'Total estimated cost by year',W:1300,H:400,L:120,tick:aud,fmt:aud,xTitle:'Year of admission (2026 is part year, to 10 Sep 2026)',yTitle:'Total estimated cost (AUD)',lgap:320});
+  }
+  if(page==='dq'){
+    const n=adm.length;
+    if(n<5){ ['c-d-fields','c-d-forms'].forEach(id=>$(id).innerHTML='<p class="empty">Fewer than 5 admissions match these filters. Clear a filter to see data completeness.</p>'); return; }
+    const fields=[['ICD-10 codes',adm.filter(a=>a.hasICD).length/n],['DRG',1],['ASIA grade',1],['Hospital Frailty Risk Score',1],['ACHI codes (operated)',adm.filter(a=>a.surgery&&a.hasACHI).length/Math.max(1,adm.filter(a=>a.surgery).length)],
+      ['Spinal Trauma Score',adm.filter(a=>a.sts!=null).length/n],['Charlson Comorbidity Index',adm.filter(a=>a.charlson!=null).length/n]].map(([k,v])=>[k,v*100]);
+    barH($('c-d-fields'),fields.sort((a,b)=>b[1]-a[1]).map(([k,v])=>({label:k,v,text:v<50?`${p2(v)}  ▲ under 50%, partial data`:p2(v),fill:v<50?C.amber:C.navy})),{label:'Key fields filled in',W:640,left:230,max:100,tick:t=>t+'.00%',xTitle:'% of admissions with a value',yTitle:'Field'});
+    const forms=['Patient details','Demographics','Diagnosis','Admissions'], st=['Complete','Unverified','Incomplete'];
+    stackCol($('c-d-forms'),forms,[{n:'Complete',c:C.navy,v:forms.map(fm=>adm.filter(a=>a.forms[fm]==='Complete').length)},{n:'Unverified',c:C.amber,v:forms.map(fm=>adm.filter(a=>a.forms[fm]==='Unverified').length)},{n:'Incomplete',c:C.char,v:forms.map(fm=>adm.filter(a=>a.forms[fm]==='Incomplete').length)}],
+      {label:'REDCap form status',tick:t=>Math.round(t),fmt:v=>v+'',xTitle:'REDCap form',yTitle:'Number of admissions',lgap:190});
+  }
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ page=t.dataset.p; document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===t)); document.querySelectorAll('[data-page]').forEach(s=>s.hidden=s.dataset.page!==page); render(); });
+document.querySelectorAll('.filters select').forEach(s=>s.onchange=render);
+document.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{ win=b.dataset.w; document.querySelectorAll('[data-w]').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
+document.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{ groupBy=b.dataset.g; document.querySelectorAll('[data-g]').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
+render();
+</script>

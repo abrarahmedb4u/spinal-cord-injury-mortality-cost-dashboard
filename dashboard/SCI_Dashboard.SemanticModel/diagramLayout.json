@@ -1,0 +1,162 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 0
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 335.72333220266717,
+            "y": 275.51404649825986
+          },
+          "nodeIndex": "Admissions",
+          "nodeLineageTag": "747af5fc-5c28-46d9-a1de-c9b6dae2eb9a",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 8
+        },
+        {
+          "location": {
+            "x": 622.73932578762924,
+            "y": 561.73828597655336
+          },
+          "nodeIndex": "DRG",
+          "nodeLineageTag": "55e94164-a81b-408e-ba8c-6071bc946ac9",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 50,
+            "y": 250.66172473343482
+          },
+          "nodeIndex": "ICD",
+          "nodeLineageTag": "b626e11d-6ea2-4fd4-a4e7-89636388db09",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 322.49035045831317,
+            "y": 628.60820520548475
+          },
+          "nodeIndex": "Patients",
+          "nodeLineageTag": "243e8c2e-d82d-44b8-a7c8-6670e5721fb2",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 447.49513966752556,
+            "y": -50
+          },
+          "nodeIndex": "Surgery",
+          "nodeLineageTag": "2a5271e2-dcf3-41e0-874b-8aa5c93ab83f",
+          "size": {
+            "height": 272,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 856.73932578762924,
+            "y": 339.30410260274238
+          },
+          "nodeIndex": "ACHI_MBS_Map",
+          "nodeLineageTag": "e364dea4-14ac-46f6-bb18-2367e1e40682",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 1140.7393257876292,
+            "y": 375.30410260274238
+          },
+          "nodeIndex": "BloodTestSwitch",
+          "nodeLineageTag": "eca3cb9c-9320-461e-b3ed-c6c01c37c718",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 6
+        },
+        {
+          "location": {
+            "x": 1424.7393257876292,
+            "y": 327.30410260274238
+          },
+          "nodeIndex": "FeeLookup",
+          "nodeLineageTag": "31cc9993-f00d-4d49-b46b-62726a40e63b",
+          "size": {
+            "height": 224,
+            "width": 234
+          },
+          "zIndex": 7
+        },
+        {
+          "location": {
+            "x": 1658.7393257876292,
+            "y": 375.30410260274238
+          },
+          "nodeIndex": "Completeness field",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 1942.7393257876292,
+            "y": 375.30410260274238
+          },
+          "nodeIndex": "Death source",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        },
+        {
+          "location": {
+            "x": 2176.7393257876292,
+            "y": 375.30410260274238
+          },
+          "nodeIndex": "SurgeryDiscountSwitch",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 0
+        }
+      ],
+      "name": "All tables",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "All tables",
+  "defaultDiagram": "All tables"
+}

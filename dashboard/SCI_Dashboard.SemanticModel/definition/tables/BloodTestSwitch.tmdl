@@ -1,0 +1,39 @@
+table BloodTestSwitch
+	lineageTag: eca3cb9c-9320-461e-b3ed-c6c01c37c718
+
+	column 'Include blood tests'
+		dataType: string
+		lineageTag: 91436e13-f497-4d92-9107-45bc01b361b5
+		summarizeBy: none
+		sourceColumn: Include blood tests
+		sortByColumn: 'Sort order'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Sort order'
+		dataType: int64
+		formatString: 0
+		lineageTag: f6faaea3-581a-48c7-9741-1eade2da3346
+		summarizeBy: sum
+		sourceColumn: Sort order
+
+		annotation SummarizationSetBy = Automatic
+
+	partition BloodTestSwitch = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [#"Include blood tests" = text, #"Sort order" = Int64.Type],
+				        {
+				            {"Yes", 1},
+				            {"No", 2}
+				        }
+				    )
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,61 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.12.0/schema.json",
+  "name": "fb3621edca3aaafbfa21",
+  "position": {
+    "x": 20,
+    "y": 110,
+    "z": 3500,
+    "height": 106,
+    "width": 232,
+    "tabOrder": 3500
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Filter patients",
+                    "textStyle": {
+                      "fontSize": "14pt",
+                      "color": "#26407A",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "Tick one or more boxes. Nothing ticked means all patients.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#5B6270"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "These filters apply to this page only.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#5B6270"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  },
+  "howCreated": "InsertVisualButton"
+}

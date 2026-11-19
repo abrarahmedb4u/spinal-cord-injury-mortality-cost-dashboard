@@ -1,0 +1,16 @@
+table 'Compare Left Gender'
+	lineageTag: c54a3936-ac2d-56ef-b514-b3dce4136dae
+
+	column Gender
+		dataType: string
+		lineageTag: 3d74bec2-4432-5e46-8208-d094847a4d76
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Gender]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Left Gender' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( DISTINCT ( Patients[Gender] ), "Gender", Patients[Gender] )
+

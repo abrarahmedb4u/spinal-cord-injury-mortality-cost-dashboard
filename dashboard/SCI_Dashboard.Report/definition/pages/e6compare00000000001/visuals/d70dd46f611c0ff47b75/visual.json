@@ -1,0 +1,37 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.13.0/schema.json",
+  "name": "d70dd46f611c0ff47b75",
+  "position": {
+    "x": 20,
+    "y": 1048,
+    "z": 19000,
+    "height": 30,
+    "width": 1880,
+    "tabOrder": 19000
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "Aboriginal and Torres Strait Islander users are advised that this dashboard contains de-identified statistics which may relate to deceased persons.",
+                    "textStyle": {
+                      "fontSize": "10pt",
+                      "color": "#c27a00"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

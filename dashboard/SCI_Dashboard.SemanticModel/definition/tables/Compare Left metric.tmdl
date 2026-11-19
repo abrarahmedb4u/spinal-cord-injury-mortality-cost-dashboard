@@ -1,0 +1,111 @@
+table 'Compare Left metric'
+	lineageTag: a903b9d7-dc99-5720-ac6f-66549562223e
+
+	measure 'Left value' =
+			VAR metric = SELECTEDVALUE ( 'Compare Left metric'[Metric], "In-hospital mortality %" )
+			RETURN
+			    CALCULATE (
+			        SWITCH (
+			            metric,
+			            "In-hospital mortality %", [In-hospital mortality %],
+			            "Admissions (n)", [Admissions (n)],
+			            "Deaths (n)", [Deaths (n)],
+			            "Median length of stay (days)", [Median length of stay (days)],
+			            "% with ICU stay", [% with ICU stay],
+			            "Average cost per admission", [Average cost per admission]
+			        ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Year'[Admission year] ), Admissions[Admission year] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Age band'[Age band] ), Admissions[Age band] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Gender'[Gender] ), Patients[Gender] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Funding'[Funding] ), Patients[Funding] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Aboriginal or TSI'[Aboriginal or TSI] ), Patients[Aboriginal or TSI] ) ),
+			        KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Had surgery'[Had surgery] ), Admissions[Had surgery] ) )
+			    )
+		lineageTag: 3ef8da3a-1465-52df-aa27-44637bcf48ed
+
+		formatStringDefinition = SWITCH ( SELECTEDVALUE ( 'Compare Left metric'[Metric], "In-hospital mortality %" ), "In-hospital mortality %", "0.00%", "Admissions (n)", "#,0", "Deaths (n)", "0", "Median length of stay (days)", "0", "% with ICU stay", "0.0%", "Average cost per admission", "\$#,0", "0" )
+
+	measure 'Left admissions' =
+			CALCULATE (
+			    [Admissions (n)],
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Year'[Admission year] ), Admissions[Admission year] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Age band'[Age band] ), Admissions[Age band] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Gender'[Gender] ), Patients[Gender] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Funding'[Funding] ), Patients[Funding] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Aboriginal or TSI'[Aboriginal or TSI] ), Patients[Aboriginal or TSI] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Had surgery'[Had surgery] ), Admissions[Had surgery] ) )
+			)
+		formatString: #,0
+		lineageTag: d2e39b42-7458-5421-9f84-34027e95a53d
+
+	measure 'Left deaths' =
+			CALCULATE (
+			    [Deaths (n)],
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Year'[Admission year] ), Admissions[Admission year] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Age band'[Age band] ), Admissions[Age band] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Gender'[Gender] ), Patients[Gender] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Funding'[Funding] ), Patients[Funding] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Aboriginal or TSI'[Aboriginal or TSI] ), Patients[Aboriginal or TSI] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Had surgery'[Had surgery] ), Admissions[Had surgery] ) )
+			)
+		formatString: 0
+		lineageTag: f8e088f6-a250-5b73-987d-ad25a5948642
+
+	measure 'Left value text' =
+			VAR metric = SELECTEDVALUE ( 'Compare Left metric'[Metric], "In-hospital mortality %" )
+			VAR v = [Left value]
+			RETURN
+			    IF ( ISBLANK ( v ), "No data", SWITCH ( metric, "In-hospital mortality %", FORMAT ( v, "0.00%" ), "Admissions (n)", FORMAT ( v, "#,0" ), "Deaths (n)", FORMAT ( v, "0" ), "Median length of stay (days)", FORMAT ( v, "0" ), "% with ICU stay", FORMAT ( v, "0.0%" ), "Average cost per admission", FORMAT ( v, "\$#,0" ) ) )
+		lineageTag: 3fcddfeb-37ec-52f8-89f4-ee6c5e3f9107
+
+	measure 'Left group summary' =
+			CALCULATE (
+			    IF (
+			        [Admissions (n)] = 0,
+			        "No admissions match these filters. Untick a box, or press Clear all filters.",
+			        "This group: " & FORMAT ( [Admissions (n)], "#,0" ) & " admissions, " & FORMAT ( [Deaths (n)], "0" ) & " deaths. In-hospital mortality "
+			            & FORMAT ( [In-hospital mortality %], "0.0%" ) & " (95% CI " & FORMAT ( [Mortality CI lower %], "0.0%" ) & " to "
+			            & FORMAT ( [Mortality CI upper %], "0.0%" ) & "). With so few deaths, a gap between the two sides is not reliable."
+			    ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Year'[Admission year] ), Admissions[Admission year] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Age band'[Age band] ), Admissions[Age band] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Gender'[Gender] ), Patients[Gender] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Funding'[Funding] ), Patients[Funding] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Aboriginal or TSI'[Aboriginal or TSI] ), Patients[Aboriginal or TSI] ) ),
+			    KEEPFILTERS ( TREATAS ( VALUES ( 'Compare Left Had surgery'[Had surgery] ), Admissions[Had surgery] ) )
+			)
+		lineageTag: 294f9583-b226-5101-981d-045d63dc2340
+
+	measure 'Left label' = "Left side (blue in the chart): " & SELECTEDVALUE ( 'Compare Left metric'[Metric], "In-hospital mortality %" )
+		lineageTag: 78535082-05a6-5968-bb84-e491a9435763
+
+	measure 'Compare chart label' =
+			"Blue = left side: " & SELECTEDVALUE ( 'Compare Left metric'[Metric], "In-hospital mortality %" )
+			    & ".    Orange = right side: " & SELECTEDVALUE ( 'Compare Right metric'[Metric], "In-hospital mortality %" ) & "."
+		lineageTag: eda4c1ee-d115-53bd-b6e7-ca8588d50082
+
+	column Metric
+		dataType: string
+		lineageTag: fc1d3f7c-e53f-5ecd-a74a-f6a7a7caa66e
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Metric]
+		sortByColumn: 'Sort order'
+
+		annotation SummarizationSetBy = User
+
+	column 'Sort order'
+		dataType: int64
+		isHidden
+		formatString: 0
+		lineageTag: a02b0f50-c8ea-5dee-9b28-22ada5801458
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Sort order]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Left metric' = calculated
+		mode: import
+		source = DATATABLE ( "Metric", STRING, "Sort order", INTEGER, { { "In-hospital mortality %", 1 }, { "Admissions (n)", 2 }, { "Deaths (n)", 3 }, { "Median length of stay (days)", 4 }, { "% with ICU stay", 5 }, { "Average cost per admission", 6 } } )
+

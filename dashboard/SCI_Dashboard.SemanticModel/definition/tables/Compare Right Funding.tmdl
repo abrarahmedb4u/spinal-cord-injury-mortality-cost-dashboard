@@ -1,0 +1,16 @@
+table 'Compare Right Funding'
+	lineageTag: 64d5f2a9-2915-5309-8123-254990a2bfba
+
+	column Funding
+		dataType: string
+		lineageTag: 25b4d3fb-48d0-5a2b-9937-6e53d24fc007
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Funding]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Right Funding' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( DISTINCT ( Patients[Funding] ), "Funding", Patients[Funding] )
+

@@ -1,0 +1,17 @@
+table 'Compare Left Year'
+	lineageTag: 53917b62-389c-5f3b-bf11-909bb5260665
+
+	column 'Admission year'
+		dataType: int64
+		formatString: 0
+		lineageTag: 7b0e7f68-c03c-5378-868f-0f62ad81132a
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Admission year]
+
+		annotation SummarizationSetBy = User
+
+	partition 'Compare Left Year' = calculated
+		mode: import
+		source = SELECTCOLUMNS ( DISTINCT ( Admissions[Admission year] ), "Admission year", Admissions[Admission year] )
+

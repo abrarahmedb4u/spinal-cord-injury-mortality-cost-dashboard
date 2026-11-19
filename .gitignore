@@ -1,0 +1,14 @@
+# Power BI local user settings
+**/.pbi/localSettings.json
+
+# Never commit REDCap API tokens
+*token*.txt
+_local_secrets/
+
+# Block data exports, except the published mock dataset
+*.csv
+!data/RAHSPR_mock_data.csv
+
+# Kept in the client zip only (signatures, contribution declaration, handwritten tester answers)
+docs/project_records/01_Project_Scoping_Document_signed_*.pdf
+docs/project_records/uat_forms/

@@ -1,0 +1,62 @@
+expression REDCap_Raw =
+		let
+		    // Switch the data source with the DataSource parameter (Home > Transform data > Edit parameters)
+		    Source = if DataSource = "REDCap API" then REDCap_API else REDCap_CSV,
+		    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+		    BlanksToNull = Table.ReplaceValue(Promoted, "", null, Replacer.ReplaceValue, Table.ColumnNames(Promoted))
+		in
+		    BlanksToNull
+	lineageTag: 4e194b26-37e0-420b-bbce-b8de3d03a326
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression REDCapTokenFile = "C:\RAHSPR\redcap_token.txt" meta [IsParameterQuery=true, Type="Text", IsParameterQueryRequired=false]
+	lineageTag: 7a14d044-492e-4bdd-885a-c4e2d014f919
+
+	annotation PBI_ResultType = Text
+
+expression DataSource = "CSV file" meta [IsParameterQuery = true, IsParameterQueryRequired = true, Type = type text, List = {"REDCap API", "CSV file"}, DefaultValue = "REDCap API"]
+	lineageTag: ef2fa691-41fb-4b37-a73a-d8616e89c73d
+
+	annotation PBI_ResultType = Text
+
+expression REDCap_API =
+		let
+		    // The API token is read from a local text file (REDCapTokenFile parameter), so it is never stored in the project files.
+		    Token = Text.Trim(Text.FromBinary(File.Contents(REDCapTokenFile))),
+		    // POST to the REDCap API: all records, raw codes, flat CSV (same layout as the manual export)
+		    Response = Web.Contents(
+		        "https://surveys.adelaide.edu.au/redcap/api/",
+		        [
+		            Content = Text.ToBinary(
+		                "token=" & Token
+		                    & "&content=record&format=csv&type=flat"
+		                    & "&rawOrLabel=raw&rawOrLabelHeaders=raw&exportCheckboxLabel=false"
+		                    & "&exportSurveyFields=false&exportDataAccessGroups=false&returnFormat=csv"
+		            ),
+		            Headers = [#"Content-Type" = "application/x-www-form-urlencoded"]
+		        ]
+		    ),
+		    Source = Csv.Document(Response, [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv])
+		in
+		    Source
+	lineageTag: 465788de-4e33-4996-9713-f51ca1c13f36
+
+	annotation PBI_ResultType = Table
+
+expression REDCap_CSV =
+		let
+		    Source = Csv.Document(File.Contents(CSVPath), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv])
+		in
+		    Source
+	lineageTag: b3ad5bbe-d26b-4459-9b80-be9c61a2fb7f
+
+	annotation PBI_ResultType = Table
+
+expression CSVPath = "C:\Users\abrar\Downloads\capstone project\S2-15_SCI_Dashboard_Handover\data\RAHSPR_mock_data.csv" meta [IsParameterQuery = true, IsParameterQueryRequired = false, Type = type text]
+	lineageTag: ddd73874-23e1-4620-bad3-eed61f40539f
+
+	annotation PBI_ResultType = Text
+

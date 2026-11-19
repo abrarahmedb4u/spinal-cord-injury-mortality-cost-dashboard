@@ -1,0 +1,543 @@
+table Admissions
+	lineageTag: 747af5fc-5c28-46d9-a1de-c9b6dae2eb9a
+
+	measure 'Admissions (n)' = COUNTROWS ( Admissions )
+		formatString: #,0
+		lineageTag: 26b49a11-e33f-49df-aaaf-80e78a81a3fb
+
+	measure 'Patients (n)' = DISTINCTCOUNT ( Admissions[patient_id] )
+		formatString: #,0
+		lineageTag: 5d7801fe-b495-4657-bd7f-9f8d2d58ef60
+
+	measure 'Deaths (n)' = SUM ( Admissions[Died in hospital] )
+		formatString: 0
+		lineageTag: 395f0a64-2c2c-4754-960b-af4872ddd7f7
+
+	measure 'In-hospital mortality %' = DIVIDE ( [Deaths (n)], [Admissions (n)] )
+		formatString: 0.00%
+		lineageTag: d73a6c27-e8d1-4d88-9891-7c7d4af0f851
+
+	measure 'Mortality CI lower %' =
+			VAR n = [Admissions (n)]
+			VAR p = DIVIDE ( [Deaths (n)], n )
+			VAR z = 1.96
+			VAR denom = 1 + z ^ 2 / n
+			VAR centre = ( p + z ^ 2 / ( 2 * n ) ) / denom
+			VAR half = z * SQRT ( p * ( 1 - p ) / n + z ^ 2 / ( 4 * n ^ 2 ) ) / denom
+			RETURN IF ( n = 0, BLANK (), MAX ( 0, centre - half ) )
+		formatString: 0.00%
+		lineageTag: e4cc70e1-1d8f-4854-ae05-579083839b0e
+
+	measure 'Mortality CI upper %' =
+			VAR n = [Admissions (n)]
+			VAR p = DIVIDE ( [Deaths (n)], n )
+			VAR z = 1.96
+			VAR denom = 1 + z ^ 2 / n
+			VAR centre = ( p + z ^ 2 / ( 2 * n ) ) / denom
+			VAR half = z * SQRT ( p * ( 1 - p ) / n + z ^ 2 / ( 4 * n ^ 2 ) ) / denom
+			RETURN IF ( n = 0, BLANK (), MIN ( 1, centre + half ) )
+		formatString: 0.00%
+		lineageTag: 1428e67e-8c53-425e-a22e-32cd96245027
+
+	measure 'Median length of stay (days)' = MEDIAN ( Admissions[adm_los] )
+		formatString: 0
+		lineageTag: 27b4a93e-6640-4fdf-99b9-57c5e78386b0
+
+	measure 'Blood tests switch' = SELECTEDVALUE ( BloodTestSwitch[Include blood tests], "No" )
+		lineageTag: 77b8f901-4389-4393-8b33-fcf4cf2220b6
+
+	measure 'Total ICU cost' = SUM ( Admissions[ICU cost] )
+		formatString: \$#,0
+		lineageTag: 38a1dd4d-2409-4a66-9588-fe780578b579
+
+	measure 'Total blood test cost' = IF ( [Blood tests switch] = "Yes", SUM ( Admissions[Blood test cost] ), 0 )
+		formatString: \$#,0
+		lineageTag: 9174adcc-6261-43f4-a7b0-4f00b3bf4820
+
+	measure 'Total surgery cost' =
+			IF (
+			    [Surgery discount switch] = "Yes",
+			    CALCULATE ( SUM ( Surgery[Surgery fee (same-day discount)] ), Surgery[Surgery status] = "Actual" ),
+			    CALCULATE ( SUM ( Surgery[Surgery fee] ), Surgery[Surgery status] = "Actual" )
+			)
+		formatString: \$#,0
+		lineageTag: 0f901083-05a3-448a-8df0-13c23d150659
+
+	measure 'Total post-op meds cost' = SUM ( Admissions[Post-op meds cost] )
+		formatString: \$#,0
+		lineageTag: 599ca351-5374-47d9-8506-94ba713b5004
+
+	measure 'Total cost (fee-based)' = [Total ICU cost] + [Total surgery cost] + [Total post-op meds cost] + [Total blood test cost]
+		formatString: \$#,0
+		lineageTag: 9bf3ce67-667b-4640-9c49-002c33c48235
+
+	measure 'Average cost per admission' = DIVIDE ( [Total cost (fee-based)], [Admissions (n)] )
+		formatString: \$#,0
+		lineageTag: ce54ea98-754b-409d-8066-277bc5ccaab4
+
+	measure 'Potential cost of planned surgery' =
+			IF (
+			    [Surgery discount switch] = "Yes",
+			    CALCULATE ( SUM ( Surgery[Surgery fee (same-day discount)] ), Surgery[Surgery status] = "Planned" ),
+			    CALCULATE ( SUM ( Surgery[Surgery fee] ), Surgery[Surgery status] = "Planned" )
+			)
+			    + SUM ( Admissions[Potential post-op meds cost] )
+		formatString: \$#,0
+		lineageTag: 1ca663b7-5faa-4190-8936-027e34cbe375
+
+	measure 'Total cost by DRG' = CALCULATE ( [Total cost (fee-based)], CROSSFILTER ( DRG[AdmissionKey], Admissions[AdmissionKey], BOTH ) )
+		formatString: \$#,0
+		lineageTag: 4c26af16-c549-4b7c-bcec-b4cfe2b38f8d
+
+	measure 'Admissions by DRG (n)' = CALCULATE ( [Admissions (n)], CROSSFILTER ( DRG[AdmissionKey], Admissions[AdmissionKey], BOTH ) )
+		formatString: #,0
+		lineageTag: 01b356c8-db55-4457-9261-84b2296c0ef2
+
+	measure 'Top 5 DRG cost' =
+			VAR r = RANKX ( ALLSELECTED ( DRG[drg_description] ), [Total cost by DRG], , DESC )
+			RETURN IF ( r <= 5, [Total cost by DRG] )
+		formatString: \$#,0
+		lineageTag: d68f8197-266c-411c-be7f-1d81b4fab03a
+
+	measure 'Top 5 operation cost' =
+			VAR r = RANKX ( ALLSELECTED ( Surgery[surg_op_description] ), [Total surgery cost], , DESC )
+			RETURN IF ( r <= 5 && [Total surgery cost] > 0, [Total surgery cost] )
+		formatString: \$#,0
+		lineageTag: 6602263d-f8eb-453c-a76d-84c59491565a
+
+	measure 'Admissions with code (n)' = CALCULATE ( DISTINCTCOUNT ( ICD[AdmissionKey] ), NOT ISBLANK ( ICD[AdmissionKey] ) )
+		formatString: 0
+		lineageTag: 9e2cbe1d-f04c-410c-b78c-7375a0027349
+
+	measure 'Death admissions (n)' = CALCULATE ( [Admissions with code (n)], Admissions[Died in hospital] = 1 )
+		formatString: 0
+		lineageTag: 2861c549-d26c-4456-9357-f28c132fed97
+
+	measure 'Records by death source' =
+			SWITCH (
+			    SELECTEDVALUE ( 'Death source'[Source] ),
+			    "Mode of separation is IP Died", [Deaths (n)],
+			    "Patient has a deceased date", COUNTROWS ( FILTER ( Admissions, NOT ISBLANK ( RELATED ( Patients[date_deceased] ) ) ) ),
+			    "Deceased date is the 10 Sep 2026 default", COUNTROWS ( FILTER ( Admissions, RELATED ( Patients[date_deceased] ) = DATE ( 2026, 9, 10 ) ) )
+			)
+		formatString: 0
+		lineageTag: c5f6ddaf-709c-444e-a27c-625b70a59443
+
+	measure 'Filled %' =
+			VAR n = [Admissions (n)]
+			VAR single = COUNTROWS ( FILTER ( Admissions, Admissions[Single-admission patient] ) )
+			RETURN
+			    SWITCH (
+			        SELECTEDVALUE ( 'Completeness field'[Field] ),
+			        "ICU hours", DIVIDE ( COUNTROWS ( FILTER ( Admissions, NOT ISBLANK ( Admissions[adm_icu_hrs] ) ) ), n ),
+			        "Ventilation hours", DIVIDE ( COUNTROWS ( FILTER ( Admissions, NOT ISBLANK ( Admissions[adm_mv_hrs] ) ) ), n ),
+			        "Admitted to ED", DIVIDE ( COUNTROWS ( FILTER ( Admissions, NOT ISBLANK ( Admissions[adm_ed_status] ) ) ), n ),
+			        "Charlson (CCI)", DIVIDE ( COUNTROWS ( FILTER ( Admissions, NOT ISBLANK ( Admissions[adm_cci] ) ) ), n ),
+			        "Frailty (HFRS)", DIVIDE ( COUNTROWS ( FILTER ( Admissions, NOT ISBLANK ( Admissions[adm_hfrs] ) ) ), n ),
+			        "Funding (public/private)", DIVIDE ( COUNTROWS ( FILTER ( Admissions, RELATED ( Patients[Funding] ) <> "Not recorded" ) ), n ),
+			        "ICD-10 code*", DIVIDE ( COUNTROWS ( FILTER ( Admissions, Admissions[Single-admission patient] && NOT ISEMPTY ( RELATEDTABLE ( ICD ) ) ) ), single ),
+			        "DRG*", DIVIDE ( COUNTROWS ( FILTER ( Admissions, Admissions[Single-admission patient] && NOT ISEMPTY ( RELATEDTABLE ( DRG ) ) ) ), single ),
+			        "ASIA grade", 0,
+			        "Spinal Trauma Score", 0
+			    )
+		formatString: 0.0%
+		lineageTag: 7579ef58-9ee6-4f14-b5d2-b4e2bb40d967
+
+	measure 'Surgery discount switch' = SELECTEDVALUE ( SurgeryDiscountSwitch[Apply same-day discount], "No" )
+		lineageTag: a4c71543-86bf-4683-b99c-65a9442e6f61
+
+	measure 'Average length of stay (days)' = AVERAGE ( Admissions[adm_los] )
+		formatString: 0.0
+		lineageTag: cc2a7be6-150c-4df8-8dc6-3efa250395b5
+
+	measure Bed-days = SUM ( Admissions[adm_los] )
+		formatString: #,0
+		lineageTag: da73124b-af2f-4570-80dd-2a063861efd3
+
+	measure '% with surgery' =
+			DIVIDE (
+			    COUNTROWS ( FILTER ( Admissions, Admissions[Had surgery] = "Yes" ) ),
+			    COUNTROWS ( FILTER ( Admissions, Admissions[Had surgery] <> "Unknown (multi-admission)" ) )
+			)
+		formatString: 0.0%
+		lineageTag: e07b18df-1148-49b3-b4a7-144ae5203f8b
+
+	measure '% with ICU stay' =
+			DIVIDE (
+			    COUNTROWS ( FILTER ( Admissions, Admissions[ICU cost] > 0 ) ),
+			    COUNTROWS ( FILTER ( Admissions, NOT ISBLANK ( Admissions[adm_icu_hrs] ) ) )
+			)
+		formatString: 0.0%
+		lineageTag: f8057350-7db6-4fa6-aa1b-6fcf034955e3
+
+	measure 'Headline mortality' =
+			VAR d = [Deaths (n)]
+			VAR n = [Admissions (n)]
+			RETURN
+			    "In-hospital mortality is " & FORMAT ( [In-hospital mortality %], "0.0%" ) & " (" & FORMAT ( d, "0" ) & " deaths in "
+			        & FORMAT ( n, "#,0" ) & " admissions). With so few deaths, differences between groups are not reliable: read the 95% confidence interval."
+		lineageTag: 9e0721ce-69bb-43f1-997c-9f51c55032cf
+
+	measure 'Headline age' = ```
+			
+			        VAR m1 = CALCULATE ( [In-hospital mortality %], Admissions[Age group] = "60-69" )
+			        VAR m2 = CALCULATE ( [In-hospital mortality %], Admissions[Age group] = "70-79" )
+			        VAR m3 = CALCULATE ( [In-hospital mortality %], Admissions[Age group] = "80+" )
+			        VAR tbl = FILTER ( ADDCOLUMNS ( VALUES ( Admissions[Age group] ), "@cost", [Average cost per admission], "@stay", [Average length of stay (days)] ), Admissions[Age group] <> "Under 60 (reference)" )
+			        VAR pattern =
+			            IF ( m1 < m2 && m2 < m3, "rises with each age group",
+			                IF ( m1 > m2 && m2 > m3, "falls with each age group", "shows no steady rise with age" ) )
+			        RETURN
+			            "Aged 60+: mortality " & pattern & " (" & FORMAT ( m1, "0.0%" ) & ", " & FORMAT ( m2, "0.0%" ) & ", " & FORMAT ( m3, "0.0%" )
+			                & "). Average cost per admission ranges $" & FORMAT ( MINX ( tbl, [@cost] ), "#,0" ) & " to $" & FORMAT ( MAXX ( tbl, [@cost] ), "#,0" )
+			                & " and average stay " & FORMAT ( MINX ( tbl, [@stay] ), "0.0" ) & " to " & FORMAT ( MAXX ( tbl, [@stay] ), "0.0" ) & " days. Under 60 is shown for comparison only."
+			```
+		lineageTag: 50116a1b-de47-4132-becc-d33a0087a280
+
+	measure 'Headline deaths' =
+			VAR d = [Deaths (n)]
+			VAR coded = [Death admissions (n)]
+			VAR topg =
+			    MAXX ( TOPN ( 1, FILTER ( VALUES ( ICD[Condition group] ), [Death admissions (n)] > 0 ), [Death admissions (n)], DESC ), ICD[Condition group] )
+			RETURN
+			    FORMAT ( d, "0" ) & " admissions ended in death; " & FORMAT ( coded + 0, "0" ) & " of them have an ICD-10 code"
+			        & IF ( NOT ISBLANK ( topg ), ", most often " & LOWER ( topg ), "" )
+			        & ". A code shows a condition was recorded, not the cause of death."
+		lineageTag: c2050806-0f91-415c-aa58-2b9442ff961f
+
+	measure 'Headline cost' =
+			VAR tot = [Total cost (fee-based)]
+			RETURN
+			    "Fee-based cost is $" & FORMAT ( tot, "#,0" ) & " ($" & FORMAT ( [Average cost per admission], "#,0" ) & " per admission). Surgery fees are "
+			        & FORMAT ( DIVIDE ( [Total surgery cost], tot ), "0%" ) & " of it. The " & FORMAT ( [Bed-days], "#,0" )
+			        & " bed-days are not costed, so the real cost of care is higher."
+		lineageTag: 369b7871-3cd2-418b-b1bc-be8017ac6bb1
+
+	measure 'Headline completeness' =
+			"ASIA grade and Spinal Trauma Score are empty. Charlson is filled for "
+			    & FORMAT ( CALCULATE ( [Filled %], 'Completeness field'[Field] = "Charlson (CCI)" ), "0%" )
+			    & " of admissions and ICD-10 codes for " & FORMAT ( CALCULATE ( [Filled %], 'Completeness field'[Field] = "ICD-10 code*" ), "0%" )
+			    & ", so anything using them covers part of the cohort only."
+		lineageTag: ac6a96a7-fb42-46a0-8f88-0aa484b5769a
+
+	measure 'Deaths of admissions' = IF ( [Admissions (n)] = 0, BLANK (), FORMAT ( [Deaths (n)], "0" ) & " / " & FORMAT ( [Admissions (n)], "#,0" ) )
+		lineageTag: 8b360392-4719-4464-baa2-7e6d1c819352
+
+	measure 'Patients context' = FORMAT ( [Patients (n)], "#,0" ) & " patients"
+		lineageTag: f61580bb-75ee-42ee-85a4-5a0caf444778
+
+	measure 'Mortality context' = IF ( [Admissions (n)] = 0, BLANK (), FORMAT ( [Deaths (n)], "0" ) & " deaths, 95% CI " & FORMAT ( [Mortality CI lower %], "0.0%" ) & " to " & FORMAT ( [Mortality CI upper %], "0.0%" ) )
+		lineageTag: b24423e8-9c34-438b-a084-e0de33f4c2b8
+
+	measure 'LOS context' = "average " & FORMAT ( [Average length of stay (days)], "0.0" ) & " days"
+		lineageTag: bc43999f-264d-422d-b5bf-3475c1237f69
+
+	measure 'ICU context' = "of admissions with ICU hours recorded"
+		lineageTag: 905fb5b7-1314-41f4-b8b7-5fdc0bbc5e54
+
+	measure 'Cost context' = "fee-based estimate, not the full cost"
+		lineageTag: d05dcb68-3da6-4ef0-a9e8-09e167b7c3e2
+
+	column patient_id
+		dataType: string
+		lineageTag: e3634f19-c276-45b1-8ac9-9dd762a140d6
+		summarizeBy: none
+		sourceColumn: patient_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column redcap_repeat_instance
+		dataType: int64
+		formatString: 0
+		lineageTag: e5898910-845b-47c6-b432-0054bebb3428
+		summarizeBy: sum
+		sourceColumn: redcap_repeat_instance
+
+		annotation SummarizationSetBy = Automatic
+
+	column adm_doa
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1164f00d-0bf9-4626-86aa-476f04241643
+		summarizeBy: none
+		sourceColumn: adm_doa
+
+		variation Variation
+			isDefault
+			relationship: dc693475-3125-49ae-953b-d8062ab7b007
+			defaultHierarchy: LocalDateTable_ff7a8dac-c666-45af-a7c5-1891d6e82f44.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column adm_dos
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0e8d5c07-f75d-4098-88ca-fe446314a379
+		summarizeBy: none
+		sourceColumn: adm_dos
+
+		variation Variation
+			isDefault
+			relationship: 4e8110ba-970b-458e-b6d6-68ec9ebd97e5
+			defaultHierarchy: LocalDateTable_ebba0010-45c8-4358-b212-bcc48a19d7c4.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column adm_age
+		dataType: double
+		lineageTag: 84d6bbcb-bb20-4ad7-9e6c-53f85948d535
+		summarizeBy: sum
+		sourceColumn: adm_age
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column adm_los
+		dataType: int64
+		formatString: 0
+		lineageTag: 18ad16f2-1d0e-48c2-814d-b232248b302f
+		summarizeBy: sum
+		sourceColumn: adm_los
+
+		annotation SummarizationSetBy = Automatic
+
+	column adm_mode_sep
+		dataType: string
+		lineageTag: a8b9e9fc-cd60-4bac-b591-344088579138
+		summarizeBy: none
+		sourceColumn: adm_mode_sep
+
+		annotation SummarizationSetBy = Automatic
+
+	column adm_ed_status
+		dataType: string
+		lineageTag: f8e670ef-3d75-4125-9b62-6247aa2a498e
+		summarizeBy: none
+		sourceColumn: adm_ed_status
+
+		annotation SummarizationSetBy = Automatic
+
+	column adm_icu_hrs
+		dataType: double
+		lineageTag: bf8de82f-5e31-423a-bf70-92e3d3bbbcd9
+		summarizeBy: sum
+		sourceColumn: adm_icu_hrs
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column adm_mv_hrs
+		dataType: double
+		lineageTag: 8fbc3d63-f1c7-4694-adc1-8ed9bf492cbd
+		summarizeBy: sum
+		sourceColumn: adm_mv_hrs
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column adm_cci
+		dataType: double
+		lineageTag: fa0969bc-bdee-4343-b00f-5c3222503ea1
+		summarizeBy: sum
+		sourceColumn: adm_cci
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column adm_hfrs
+		dataType: double
+		lineageTag: 36802ee0-9996-4fc4-a539-f84f1f327c2d
+		summarizeBy: sum
+		sourceColumn: adm_hfrs
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column AdmissionKey
+		dataType: string
+		lineageTag: 195e9fb6-4f4b-4ebc-bc85-aed11e0260e8
+		summarizeBy: none
+		sourceColumn: AdmissionKey
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Admission year'
+		dataType: int64
+		formatString: 0
+		lineageTag: 824a96c3-aa29-4468-9644-049284429af0
+		summarizeBy: sum
+		sourceColumn: Admission year
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Is 60+'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: c7996c3a-e4b1-452b-bf8b-86614553dd63
+		summarizeBy: none
+		sourceColumn: Is 60+
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Age band'
+		dataType: string
+		lineageTag: 4f1f7100-df8e-42af-8cd5-20a043ba62d9
+		summarizeBy: none
+		sourceColumn: Age band
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'HFRS band'
+		dataType: string
+		lineageTag: 56607623-a5c7-43a9-96be-34bf071d8edc
+		summarizeBy: none
+		sourceColumn: HFRS band
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Died in hospital'
+		dataType: int64
+		formatString: 0
+		lineageTag: b52f9064-27b5-4cc9-8596-4055e55b3107
+		summarizeBy: sum
+		sourceColumn: Died in hospital
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ICU days'
+		dataType: int64
+		formatString: 0
+		lineageTag: bdfa1d0d-fc96-4a7a-b1a5-2c8deb0c7b1d
+		summarizeBy: sum
+		sourceColumn: ICU days
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Admissions per patient'
+		dataType: int64
+		formatString: 0
+		lineageTag: f41af905-9eb2-41a4-aa33-6e1f9625b796
+		summarizeBy: sum
+		sourceColumn: Admissions per patient
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Single-admission patient'
+		dataType: boolean
+		formatString: """TRUE"";""TRUE"";""FALSE"""
+		lineageTag: fc957294-408c-41d3-a6bc-8afea0f2bb88
+		summarizeBy: none
+		sourceColumn: Single-admission patient
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'ICU cost'
+		dataType: double
+		lineageTag: 6c26db23-0acd-43ed-b149-1bee13359ef8
+		summarizeBy: sum
+		sourceColumn: ICU cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Blood test cost'
+		dataType: double
+		lineageTag: 9169ba5f-d634-46f3-8dd4-f2222dc17498
+		summarizeBy: sum
+		sourceColumn: Blood test cost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Post-op meds cost' =
+			
+			VAR ActualSurgeries = CALCULATE ( COUNTROWS ( Surgery ), Surgery[Surgery status] = "Actual" )
+			VAR MedsFee =
+			    LOOKUPVALUE ( FeeLookup[Fee], FeeLookup[Code], "MELOXICAM" )
+			        + LOOKUPVALUE ( FeeLookup[Fee], FeeLookup[Code], "PARACETAMOL_CODEINE" )
+			RETURN
+			    IF ( ActualSurgeries > 0, MedsFee, 0 )
+		lineageTag: a89fc06f-4cae-49a6-aa74-6df257b6abb8
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Potential post-op meds cost' =
+			
+			VAR ActualSurgeries = CALCULATE ( COUNTROWS ( Surgery ), Surgery[Surgery status] = "Actual" )
+			VAR PlannedSurgeries = CALCULATE ( COUNTROWS ( Surgery ), Surgery[Surgery status] = "Planned" )
+			VAR MedsFee =
+			    LOOKUPVALUE ( FeeLookup[Fee], FeeLookup[Code], "MELOXICAM" )
+			        + LOOKUPVALUE ( FeeLookup[Fee], FeeLookup[Code], "PARACETAMOL_CODEINE" )
+			RETURN
+			    IF ( ActualSurgeries = 0 && PlannedSurgeries > 0, MedsFee, 0 )
+		lineageTag: 341449f3-7697-4455-ac4c-9d9bc1644f9f
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Age group' = SWITCH ( TRUE (), Admissions[adm_age] < 60, "Under 60 (reference)", Admissions[adm_age] < 70, "60-69", Admissions[adm_age] < 80, "70-79", "80+" )
+		lineageTag: 8d121926-303b-4cff-ada4-5fc57715cfc9
+		summarizeBy: none
+		sortByColumn: 'Age group order'
+
+	column 'Age group order' = SWITCH ( TRUE (), Admissions[adm_age] < 60, 1, Admissions[adm_age] < 70, 2, Admissions[adm_age] < 80, 3, 4 )
+		formatString: 0
+		lineageTag: 72a8f44d-2121-45cf-b148-5d537c051c2f
+		summarizeBy: none
+
+	column 'Had surgery' =
+			IF (
+			    NOT Admissions[Single-admission patient],
+			    "Unknown (multi-admission)",
+			    IF ( CALCULATE ( COUNTROWS ( Surgery ), Surgery[Surgery status] = "Actual" ) > 0, "Yes", "No" )
+			)
+		lineageTag: dd043284-2e44-4551-b02e-9efff6331304
+		summarizeBy: none
+
+	partition Admissions = m
+		mode: import
+		source =
+				let
+				    Source = REDCap_Raw,
+				    Rows = Table.SelectRows(Source, each [redcap_repeat_instrument] = "admissions"),
+				    Keep = Table.SelectColumns(Rows, {"patient_id", "redcap_repeat_instance", "adm_doa", "adm_dos", "adm_age", "adm_los", "adm_mode_sep", "adm_ed_status", "adm_icu_hrs", "adm_mv_hrs", "adm_cci", "adm_hfrs"}),
+				    Typed = Table.TransformColumnTypes(Keep, {{"redcap_repeat_instance", Int64.Type}, {"adm_doa", type date}, {"adm_dos", type date}, {"adm_age", type number}, {"adm_los", Int64.Type}, {"adm_icu_hrs", type number}, {"adm_mv_hrs", type number}, {"adm_cci", type number}, {"adm_hfrs", type number}}),
+				    Key = Table.AddColumn(Typed, "AdmissionKey", each [patient_id] & "-" & Text.From([redcap_repeat_instance]), type text),
+				    Year = Table.AddColumn(Key, "Admission year", each Date.Year([adm_doa]), Int64.Type),
+				    Is60 = Table.AddColumn(Year, "Is 60+", each [adm_age] >= 60, type logical),
+				    AgeBand = Table.AddColumn(Is60, "Age band", each if [adm_age] < 60 then "Under 60" else if [adm_age] < 75 then "60-74" else "75+", type text),
+				    HFRS = Table.AddColumn(AgeBand, "HFRS band", each if [adm_hfrs] = null then "Not recorded" else if [adm_hfrs] < 5 then "Low (<5)" else if [adm_hfrs] <= 15 then "Intermediate (5-15)" else "High (>15)", type text),
+				    Died = Table.AddColumn(HFRS, "Died in hospital", each if Text.StartsWith([adm_mode_sep], "IP Died") then 1 else 0, Int64.Type),
+				    ICUDays = Table.AddColumn(Died, "ICU days", each if [adm_icu_hrs] = null then null else Number.RoundUp([adm_icu_hrs] / 24), Int64.Type),
+				    ICUFirstDayFee = FeeLookup{[Code = "13870"]}[Fee],
+				    ICULaterDayFee = FeeLookup{[Code = "13873"]}[Fee],
+				    BloodTestFee = FeeLookup{[Code = "65060"]}[Fee],
+				    ICUCost = Table.AddColumn(ICUDays, "ICU cost", each if [ICU days] = null then null else if [ICU days] = 0 then 0 else ICUFirstDayFee + ([ICU days] - 1) * ICULaterDayFee, type number),
+				    BloodCost = Table.AddColumn(ICUCost, "Blood test cost", each BloodTestFee, type number),
+				    Counts = Table.Group(BloodCost, {"patient_id"}, {{"Admissions per patient", each Table.RowCount(_), Int64.Type}}),
+				    Joined = Table.NestedJoin(BloodCost, {"patient_id"}, Counts, {"patient_id"}, "C", JoinKind.LeftOuter),
+				    Expanded = Table.ExpandTableColumn(Joined, "C", {"Admissions per patient"}),
+				    Single = Table.AddColumn(Expanded, "Single-admission patient", each [Admissions per patient] = 1, type logical)
+				in
+				    Single
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

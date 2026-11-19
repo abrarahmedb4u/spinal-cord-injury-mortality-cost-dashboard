@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "SCI_Dashboard"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "f0690c1b-0d7e-4f9b-bacc-d3fc976722af"
+  }
+}
